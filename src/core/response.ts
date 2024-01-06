@@ -12,11 +12,7 @@ export class DataResponse<T> {
 
   readonly data: T;
 
-  constructor(
-    data: T,
-    message: string = 'success',
-    statusCode = StatusCode.SUCCESS,
-  ) {
+  constructor(statusCode: StatusCode, message: string, data: T) {
     this.statusCode = statusCode;
     this.message = message;
     this.data = data;
@@ -28,8 +24,8 @@ export class MessageResponse {
 
   readonly message: string;
 
-  constructor(message: string, statusCode = StatusCode.SUCCESS) {
-    this.message = message;
+  constructor(statusCode: StatusCode, message: string) {
     this.statusCode = statusCode;
+    this.message = message;
   }
 }

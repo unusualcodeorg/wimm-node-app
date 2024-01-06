@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ServerConfig, ServerConfigName } from './config/server.config';
 import { ValidationPipe } from '@nestjs/common';
+import { ResponseTransformInterceptor } from './core/response.interceptor';
 
 async function server() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,8 @@ async function server() {
       forbidUnknownValues: true,
     }),
   );
+
+  app.useGlobalInterceptors(new ResponseTransformInterceptor());
 
   await app.listen(serverConfig.port);
 }
