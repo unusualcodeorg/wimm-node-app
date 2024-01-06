@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 export type MessageDocument = HydratedDocument<Message>;
 
-@Schema({ collection: 'messages' })
+@Schema({ collection: 'messages', versionKey: false, timestamps: true })
 export class Message {
   @Prop({ required: true })
   type: string;
@@ -16,9 +16,6 @@ export class Message {
 
   @Prop()
   deviceId?: string;
-
-  @Prop({ required: true, select: false })
-  receivedAt?: Date;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

@@ -10,7 +10,14 @@ async function server() {
   const configService = app.get(ConfigService);
   const serverConfig = configService.getOrThrow<ServerConfig>(ServerConfigName);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    }),
+  );
 
   await app.listen(serverConfig.port);
 }
