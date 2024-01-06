@@ -1,21 +1,22 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   MongooseOptionsFactory,
   MongooseModuleOptions,
 } from '@nestjs/mongoose';
-import databaseConfig, { DatabaseConfig } from './database.config';
+import { ConfigService } from '@nestjs/config';
+import { DatabaseConfig, DatabaseConfigName } from './database.config';
 
 @Injectable()
 export class DatabaseConfigService implements MongooseOptionsFactory {
-  constructor(
-    @Inject(databaseConfig.KEY)
-    private config: DatabaseConfig,
-  ) {}
+  constructor(private readonly configService: ConfigService) {}
 
   createMongooseOptions(): MongooseModuleOptions {
-    const { user, host, port, name, minPoolSize, maxPoolSize } = this.config;
+    const dbConfig =
+      this.configService.getOrThrow<DatabaseConfig>(DatabaseConfigName);
 
-    const password = encodeURIComponent(this.config.password);
+    const { user, host, port, name, minPoolSize, maxPoolSize } = dbConfig;
+
+    const password = encodeURIComponent(dbConfig.password);
 
     const uri = `mongodb://${user}:${password}@${host}:${port}/${name}`;
 
