@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import serverConfig from './config/server.config';
 import { MessageModule } from './message/message.module';
-import { DatabaseFactory } from './database/database.factory';
+import { DatabaseFactory } from './core/database.factory';
 import databaseConfig from './config/database.config';
 
 @Module({
