@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { DataResponse } from '../core/response';
+import { MessageResponse } from '../core/response';
 
 @Controller('contact')
 export class MessageController {
@@ -9,7 +9,7 @@ export class MessageController {
 
   @Post()
   async create(@Body() createMessageDto: CreateMessageDto) {
-    const message = await this.messageService.create(createMessageDto);
-    return new DataResponse(message);
+    await this.messageService.create(createMessageDto);
+    return new MessageResponse('Message received successfully!');
   }
 }
