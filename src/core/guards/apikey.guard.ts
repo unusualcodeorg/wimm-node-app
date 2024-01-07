@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { HeaderName } from '../../common/header';
 import { CoreService } from '../core.service';
-import { PublicRequest } from '../../common/types/app-request';
 import { Reflector } from '@nestjs/core';
 import { Permissions } from '../../common/decorators/permissions.decorator';
+import { PublicRequest } from '../../common/request';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
