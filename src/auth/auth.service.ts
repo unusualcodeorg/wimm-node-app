@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -119,7 +118,6 @@ export class AuthService {
     try {
       return await this.jwtService.verifyAsync<TokenPayload>(token);
     } catch (error) {
-      Logger.error(error);
       if (error instanceof TokenExpiredError) throw error;
       throw new UnauthorizedException('Invalid Access Token');
     }
