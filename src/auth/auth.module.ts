@@ -10,6 +10,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Keystore, KeystoreSchema } from './schemas/keystore.schema';
 import { UserModule } from '../user/user.module';
 import { Role, RoleSchema } from './schemas/role.schema';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -28,6 +29,10 @@ import { Role, RoleSchema } from './schemas/role.schema';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
     ConfigService,
     AuthService,
