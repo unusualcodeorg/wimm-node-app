@@ -4,9 +4,14 @@
 # IDE
 /.idea
 /.awcache
+/.vs
 
 # misc
 npm-debug.log
+
+# ignore logs
+/logs
+*.log
 
 # tests
 /coverage
@@ -14,3 +19,26 @@ npm-debug.log
 
 # dist
 /dist
+/build
+
+#keys
+keys/*
+!keys/*.md
+!keys/*.example
+
+#temp
+temp
+.DS_Store
+
+*.save
+*.save.*
+
+disk/*
+!disk/.gitkeep
+
+# Environment varibles
+*.env
+*.env.test
+
+# ignore key
+*.pem

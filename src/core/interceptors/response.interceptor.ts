@@ -5,11 +5,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
-import {
-  DataResponse,
-  MessageResponse,
-  StatusCode,
-} from '../../common/response';
+import { DataResponse, MessageResponse, StatusCode } from '../http/response';
 
 @Injectable()
 export class ResponseTransformInterceptor implements NestInterceptor {

@@ -9,7 +9,7 @@ export class CoreService {
     @InjectModel(ApiKey.name) private readonly apikeyModel: Model<ApiKey>,
   ) {}
 
-  async findByKey(key: string): Promise<ApiKey | null> {
+  async findApiKey(key: string): Promise<ApiKey | null> {
     return this.apikeyModel.findOne({ key: key, status: true }).lean().exec();
   }
 }

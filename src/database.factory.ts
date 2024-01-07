@@ -4,7 +4,7 @@ import {
   MongooseModuleOptions,
 } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-import { DatabaseConfig, DatabaseConfigName } from '../config/database.config';
+import { DatabaseConfig, DatabaseConfigName } from './config/database.config';
 
 @Injectable()
 export class DatabaseFactory implements MongooseOptionsFactory {
