@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export enum Permission {
   GENERAL = 'GENERAL',
@@ -10,6 +10,8 @@ export type MessageDocument = HydratedDocument<ApiKey>;
 
 @Schema({ collection: 'api_keys', versionKey: false, timestamps: true })
 export class ApiKey {
+  readonly _id: Types.ObjectId;
+
   @Prop({ trim: true, required: true, unique: true, maxlength: 1024 })
   readonly key: string;
 
@@ -28,8 +30,8 @@ export class ApiKey {
   })
   readonly comments: string[];
 
-  @Prop({ default: true, select: false })
-  readonly status?: boolean;
+  @Prop({ default: true })
+  readonly status: boolean;
 }
 
 export const ApiKeySchema = SchemaFactory.createForClass(ApiKey);

@@ -5,6 +5,8 @@ import {
 } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { DatabaseConfig, DatabaseConfigName } from './config/database.config';
+import mongoose from 'mongoose';
+import { ServerConfig, ServerConfigName } from './config/server.config';
 
 @Injectable()
 export class DatabaseFactory implements MongooseOptionsFactory {
@@ -20,6 +22,10 @@ export class DatabaseFactory implements MongooseOptionsFactory {
 
     const uri = `mongodb://${user}:${password}@${host}:${port}/${name}`;
 
+    const serverConfig =
+      this.configService.getOrThrow<ServerConfig>(ServerConfigName);
+    if (serverConfig.nodeEnv == 'development') mongoose.set({ debug: true });
+
     Logger.debug('Database URI:' + uri);
 
     return {
@@ -28,7 +34,7 @@ export class DatabaseFactory implements MongooseOptionsFactory {
       minPoolSize: minPoolSize,
       maxPoolSize: maxPoolSize,
       connectTimeoutMS: 60000, // Give up initial connection after 10 seconds
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity,
     };
   }
 }

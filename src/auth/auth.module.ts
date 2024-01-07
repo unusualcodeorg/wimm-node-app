@@ -6,6 +6,10 @@ import { AuthGuard } from './guards/auth.guard';
 import { AuthService } from './auth.service';
 import { TokenFactory } from './token/token.factory';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Keystore, KeystoreSchema } from './schemas/keystore.schema';
+import { UserModule } from '../user/user.module';
+import { Role, RoleSchema } from './schemas/role.schema';
 
 @Module({
   imports: [
@@ -14,6 +18,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useClass: TokenFactory,
       inject: [ConfigService],
     }),
+    MongooseModule.forFeature([
+      { name: Keystore.name, schema: KeystoreSchema },
+    ]),
+    MongooseModule.forFeature([{ name: Role.name, schema: RoleSchema }]),
+    UserModule,
   ],
   providers: [
     {

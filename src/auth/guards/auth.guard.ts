@@ -13,6 +13,7 @@ import { TokenConfig, TokenConfigName } from '../../config/token.config';
 import { Types } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth.service';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,6 +21,7 @@ export class AuthGuard implements CanActivate {
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
     private readonly reflector: Reflector,
+    private readonly userService: UserService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -38,6 +40,17 @@ export class AuthGuard implements CanActivate {
       this.configService.getOrThrow<TokenConfig>(TokenConfigName);
 
     this.validatePayload(payload, tokenConfig);
+
+    const user = await this.userService.findUserById(
+      new Types.ObjectId(payload.sub),
+    );
+    if (!user) throw new UnauthorizedException('User not registered');
+
+    const keystore = await this.authService.findKeystore(user, payload.prm);
+    if (!keystore) throw new UnauthorizedException('Invalid access token');
+
+    request.user = user;
+    request.keystore = keystore;
 
     return true;
   }

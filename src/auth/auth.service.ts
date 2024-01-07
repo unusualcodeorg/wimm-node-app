@@ -1,26 +1,30 @@
-import { ConfigService } from '@nestjs/config';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { TokenPayload } from './token/token.payload';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
+import { UserService } from '../user/user.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Keystore } from './schemas/keystore.schema';
+import { Model } from 'mongoose';
+import { User } from '../user/schemas/user.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly configService: ConfigService,
+    @InjectModel(Keystore.name) private readonly keystoreModel: Model<Keystore>,
     private readonly jwtService: JwtService,
-    // private readonly usersService: UsersService,
+    private readonly userService: UserService,
   ) {}
 
-  // async signIn(username: string, pass: string) {
-  //   const user = await this.usersService.findOne(username);
-  //   if (user?.password !== pass) {
-  //     throw new UnauthorizedException();
-  //   }
-  //   const payload = { username: user.username, sub: user.userId };
-  //   return {
-  //     access_token: await this.jwtService.signAsync(payload),
-  //   };
-  // }
+  async findKeystore(client: User, key: string) {
+    return this.keystoreModel
+      .findOne({
+        client: client._id,
+        primaryKey: key,
+        status: true,
+      })
+      .lean()
+      .exec();
+  }
 
   async signToken(payload: TokenPayload): Promise<string> {
     return this.jwtService.signAsync(payload);

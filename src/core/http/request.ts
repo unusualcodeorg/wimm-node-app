@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import { User } from '../../user/schemas/user.schema';
 import { ApiKey } from '../schemas/apikey.schema';
+import { Keystore } from '../../auth/schemas/keystore.schema';
 
 export interface PublicRequest extends Request {
   apiKey: ApiKey;
@@ -13,7 +14,7 @@ export interface RoleRequest extends PublicRequest {
 export interface ProtectedRequest extends RoleRequest {
   user: User;
   accessToken: string;
-  // keystore: Keystore;
+  keystore: Keystore;
 }
 
 export interface Tokens {

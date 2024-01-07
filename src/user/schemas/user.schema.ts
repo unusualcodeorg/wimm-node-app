@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
+import { Role } from '../../auth/schemas/role.schema';
 
 export type MessageDocument = HydratedDocument<User>;
 
 @Schema({ collection: 'users', versionKey: false, timestamps: true })
 export class User {
+  readonly _id: Types.ObjectId;
+
   @Prop({ trim: true, maxlength: 200 })
   name?: string;
 
@@ -38,13 +41,14 @@ export class User {
   @Prop({ trim: true, maxlength: 500 })
   tagline?: string;
 
-  // roles: Role[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Role.name }] })
+  roles: Role[];
 
   @Prop({ default: false })
   verified: boolean;
 
-  @Prop({ default: true, select: false })
-  readonly status?: boolean;
+  @Prop({ default: true })
+  readonly status: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
