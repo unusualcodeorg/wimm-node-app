@@ -1,9 +1,10 @@
 import { Module, ValidationPipe } from '@nestjs/common';
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ResponseTransformInterceptor } from './interceptors/response.interceptor';
 import { CoreService } from './core.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ApiKey, ApiKeySchema } from './schemas/apikey.schema';
+import { ApiKeyGuard } from './guards/apikey.guard';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { ApiKey, ApiKeySchema } from './schemas/apikey.schema';
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ResponseTransformInterceptor },
+    { provide: APP_GUARD, useClass: ApiKeyGuard },
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
