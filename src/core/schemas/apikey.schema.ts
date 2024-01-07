@@ -3,6 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 export enum Permission {
   GENERAL = 'GENERAL',
+  XYZ_SERVICE = 'XYZ_SERVICE',
 }
 
 export type MessageDocument = HydratedDocument<ApiKey>;
