@@ -3,8 +3,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import serverConfig from './config/server.config';
 import { MessageModule } from './message/message.module';
-import { DatabaseFactory } from './core/database.factory';
+import { DatabaseFactory } from './factories/database.factory';
 import databaseConfig from './config/database.config';
+import { CoreModule } from './core/core.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import databaseConfig from './config/database.config';
       useClass: DatabaseFactory,
       inject: [ConfigService],
     }),
+    CoreModule,
     MessageModule,
   ],
 })
