@@ -1,7 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { Permissions } from '../common/decorators/permission.decorator';
+import { Permission } from '../core/schemas/apikey.schema';
 
+@Permissions([Permission.GENERAL])
 @Controller('contact')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}

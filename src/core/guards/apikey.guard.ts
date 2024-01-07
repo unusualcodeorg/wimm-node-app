@@ -6,13 +6,22 @@ import {
 } from '@nestjs/common';
 import { HeaderName } from '../../common/header';
 import { CoreService } from '../core.service';
+import { PublicRequest } from '../../common/types/app-request';
+import { Reflector } from '@nestjs/core';
+import { Permissions } from '../../common/decorators/permission.decorator';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
-  constructor(private readonly coreService: CoreService) {}
+  constructor(
+    private readonly coreService: CoreService,
+    private readonly reflector: Reflector,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const permissions = this.reflector.get(Permissions, context.getClass());
+    if (!permissions) throw new ForbiddenException();
+
+    const request = context.switchToHttp().getRequest<PublicRequest>();
 
     const key = request.headers[HeaderName.API_KEY]?.toString();
     if (!key) throw new ForbiddenException();
@@ -20,11 +29,14 @@ export class ApiKeyGuard implements CanActivate {
     const apiKey = await this.coreService.findByKey(key);
     if (!apiKey) throw new ForbiddenException();
 
-    // const user = request.user;
-    // const hasRole = () =>
-    //   user.roles.some((role) => !!roles.find((item) => item === role));
+    request.apiKey = apiKey;
 
-    // return user && user.roles && hasRole();
-    return true;
+    for (const askedPermission of permissions) {
+      for (const allowedPemission of apiKey.permissions) {
+        if (allowedPemission === askedPermission) return true;
+      }
+    }
+
+    throw new ForbiddenException();
   }
 }
