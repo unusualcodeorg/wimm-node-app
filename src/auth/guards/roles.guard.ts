@@ -16,7 +16,7 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<ProtectedRequest>();
     const user = request.user;
 
-    if (!user) return true;
+    if (!user) return true; // Note: if authenticated then authorization role in required
 
     let roles = this.reflector.get(Roles, context.getClass());
     if (!roles) roles = this.reflector.get(Roles, context.getHandler());

@@ -17,7 +17,13 @@ export class User {
   @Prop({ unique: true, required: true, trim: true })
   email: string;
 
-  @Prop({ select: false, required: true, trim: true })
+  @Prop({
+    select: false,
+    required: true,
+    trim: true,
+    minlength: 6,
+    maxlength: 100,
+  })
   password?: string;
 
   @Prop({ select: false, trim: true, maxlength: 2000 })

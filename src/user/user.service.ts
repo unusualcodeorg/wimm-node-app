@@ -23,4 +23,16 @@ export class UserService {
       .lean()
       .exec();
   }
+
+  async findByEmail(email: string) {
+    return this.userModel
+      .findOne({ email: email })
+      .select(this.USER_CRITICAL_DETAIL)
+      .populate({
+        path: 'roles',
+        match: { status: true },
+      })
+      .lean()
+      .exec();
+  }
 }
