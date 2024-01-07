@@ -5,7 +5,7 @@ import { CoreService } from './core.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ApiKey, ApiKeySchema } from './schemas/apikey.schema';
 import { ApiKeyGuard } from './guards/apikey.guard';
-import { ErrorHandler } from './interceptors/errors.handler';
+import { ExpectionHandler } from './interceptors/exception.handler';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { ErrorHandler } from './interceptors/errors.handler';
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ResponseTransformInterceptor },
-    { provide: APP_FILTER, useClass: ErrorHandler },
+    { provide: APP_FILTER, useClass: ExpectionHandler },
     { provide: APP_GUARD, useClass: ApiKeyGuard },
     {
       provide: APP_PIPE,
