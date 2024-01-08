@@ -19,7 +19,6 @@ import { AuthModule } from './auth/auth.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useClass: DatabaseFactory,
-      inject: [ConfigService],
     }),
     CoreModule,
     AuthModule,

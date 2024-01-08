@@ -5,7 +5,7 @@ import { AuthController } from './auth.controller';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthService } from './auth.service';
 import { TokenFactory } from './token/token.factory';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Keystore, KeystoreSchema } from './schemas/keystore.schema';
 import { UserModule } from '../user/user.module';
@@ -14,10 +14,10 @@ import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useClass: TokenFactory,
-      inject: [ConfigService],
     }),
     MongooseModule.forFeature([
       { name: Keystore.name, schema: KeystoreSchema },
@@ -34,7 +34,6 @@ import { RolesGuard } from './guards/roles.guard';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
-    ConfigService,
     AuthService,
   ],
   controllers: [AuthController],
