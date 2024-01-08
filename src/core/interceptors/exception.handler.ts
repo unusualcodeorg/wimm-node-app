@@ -44,7 +44,6 @@ export class ExpectionHandler implements ExceptionFilter {
     }
 
     response.status(status).json({
-      status: status,
       statusCode: statusCode,
       message: message,
       errors: errors,
