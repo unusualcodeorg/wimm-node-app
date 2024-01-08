@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
 import {
   MulterModuleOptions,
   MulterOptionsFactory,
@@ -13,17 +12,6 @@ export class FileDiskFactory implements MulterOptionsFactory {
 
   createMulterOptions(): MulterModuleOptions {
     return {
-      fileFilter: (_, file: Express.Multer.File, callback) => {
-        const allowedExtensions = ['.jpg', '.jpeg', '.png'];
-        const ext = extname(file.originalname).toLowerCase();
-        if (allowedExtensions.includes(ext)) {
-          return callback(null, true);
-        }
-        return callback(
-          new Error('Only .jpg, .jpeg, and .png files are allowed'),
-          false,
-        );
-      },
       storage: diskStorage({
         destination: this.filesService.getDiskPath(),
         filename: (_, file, callback) => {
