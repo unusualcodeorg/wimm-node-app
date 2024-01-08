@@ -59,7 +59,12 @@ export class AuthService {
 
     const refreshTokenPayload = await this.verifyToken(
       tokenRefreshDto.refreshToken,
-    );
+    ).catch((e: Error) => {
+      if (e instanceof TokenExpiredError)
+        throw new UnauthorizedException('Refresh Token Expired');
+      else throw new UnauthorizedException('Invalid Refresh Token');
+    });
+
     const validRefreshToken = this.validatePayload(refreshTokenPayload);
     if (!validRefreshToken)
       throw new UnauthorizedException('Invalid Refresh Token');

@@ -5,27 +5,21 @@ export enum StatusCode {
   INVALID_ACCESS_TOKEN = 10003,
 }
 
-export class DataResponse<T> {
-  readonly statusCode: StatusCode;
-
-  readonly message: string;
-
-  readonly data: T;
-
-  constructor(statusCode: StatusCode, message: string, data: T) {
-    this.statusCode = statusCode;
-    this.message = message;
-    this.data = data;
-  }
-}
-
 export class MessageResponse {
   readonly statusCode: StatusCode;
-
   readonly message: string;
 
   constructor(statusCode: StatusCode, message: string) {
     this.statusCode = statusCode;
     this.message = message;
+  }
+}
+
+export class DataResponse<T> extends MessageResponse {
+  readonly data: T;
+
+  constructor(statusCode: StatusCode, message: string, data: T) {
+    super(statusCode, message);
+    this.data = data;
   }
 }
