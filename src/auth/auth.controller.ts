@@ -44,7 +44,7 @@ export class AuthController {
     return 'Logout sucess';
   }
 
-  @Post('refresh')
+  @Post('token/refresh')
   async tokenRefresh(
     @Request() request: ProtectedRequest,
     @Body() tokenRefreshDto: TokenRefreshDto,

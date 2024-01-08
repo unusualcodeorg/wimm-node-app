@@ -9,6 +9,7 @@ import {
 import { TokenExpiredError } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { StatusCode } from '../http/response';
+import { isArray } from 'class-validator';
 
 @Catch()
 export class ExpectionHandler implements ExceptionFilter {
@@ -20,14 +21,20 @@ export class ExpectionHandler implements ExceptionFilter {
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let statusCode = StatusCode.FAILURE;
     let message: string = 'Something went wrong';
+    let errors: any[] | undefined = undefined;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const body = exception.getResponse();
       if (typeof body === 'string') {
         message = body;
-      } else if ('message' in body && typeof body.message === 'string') {
-        message = body.message;
+      } else if ('message' in body) {
+        if (typeof body.message === 'string') {
+          message = body.message;
+        } else if (isArray(body.message) && body.message.length > 0) {
+          message = body.message[0];
+          errors = body.message;
+        }
       }
     } else if (exception instanceof TokenExpiredError) {
       status = HttpStatus.UNAUTHORIZED;
@@ -40,6 +47,7 @@ export class ExpectionHandler implements ExceptionFilter {
       status: status,
       statusCode: statusCode,
       message: message,
+      errors: errors,
       url: request.url,
     });
   }
