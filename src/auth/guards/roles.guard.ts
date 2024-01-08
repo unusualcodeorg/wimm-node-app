@@ -13,19 +13,19 @@ export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest<ProtectedRequest>();
-    const user = request.user;
+    let roles = this.reflector.get(Roles, context.getHandler());
+    if (!roles) roles = this.reflector.get(Roles, context.getClass());
+    if (roles) {
+      const request = context.switchToHttp().getRequest<ProtectedRequest>();
+      const user = request.user;
+      if (!user) throw new ForbiddenException('Permission Denied');
 
-    if (!user) return true; // Note: if authenticated then authorization role in required
+      const hasRole = () =>
+        user.roles.some((role) => !!roles.find((item) => item === role.code));
 
-    let roles = this.reflector.get(Roles, context.getClass());
-    if (!roles) roles = this.reflector.get(Roles, context.getHandler());
-    if (!roles) throw new ForbiddenException('Permission Denied');
+      if (!hasRole()) throw new ForbiddenException('Permission Denied');
+    }
 
-    const hasRole = () =>
-      user.roles.some((role) => !!roles.find((item) => item === role.code));
-
-    if (!hasRole()) throw new ForbiddenException('Permission Denied');
     return true;
   }
 }

@@ -10,13 +10,14 @@ import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Keystore } from './schemas/keystore.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
 import { SignInBasicDto } from './dto/signin-basic.dto';
 import { ConfigService } from '@nestjs/config';
 import { TokenConfig, TokenConfigName } from '../config/token.config';
 import { compare } from 'bcrypt';
 import { randomBytes } from 'crypto';
+import { TokenRefreshDto } from './dto/token-refresh.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,27 +37,60 @@ export class AuthService {
     const match = await compare(signInBasicDto.password, user.password);
     if (!match) throw new UnauthorizedException('Authentication failure');
 
-    const accessTokenKeyId = randomBytes(64).toString('hex');
-    const refreshTokenKeyId = randomBytes(64).toString('hex');
+    const tokens = await this.createTokens(user);
 
-    await this.createKeystore(user, accessTokenKeyId, refreshTokenKeyId);
+    return { user: user, tokens: tokens };
+  }
 
-    const tokens = await this.createTokens(
-      user,
-      accessTokenKeyId,
-      refreshTokenKeyId,
+  async signOut(keystore: Keystore) {
+    this.removeKeystore(keystore._id);
+  }
+
+  async refreshToken(tokenRefreshDto: TokenRefreshDto, accessToken: string) {
+    const accessTokenPayload = this.decodeToken(accessToken);
+    const validAccessToken = this.validatePayload(accessTokenPayload);
+    if (!validAccessToken)
+      throw new UnauthorizedException('Invalid Access Token');
+
+    const user = await this.userService.findUserById(
+      new Types.ObjectId(accessTokenPayload.sub),
     );
+    if (!user) throw new UnauthorizedException('User not registered');
+
+    const refreshTokenPayload = await this.verifyToken(
+      tokenRefreshDto.refreshToken,
+    );
+    const validRefreshToken = this.validatePayload(refreshTokenPayload);
+    if (!validRefreshToken)
+      throw new UnauthorizedException('Invalid Refresh Token');
+
+    if (accessTokenPayload.sub !== refreshTokenPayload.sub)
+      throw new UnauthorizedException('Invalid access token');
+
+    const keystore = await this.findTokensKeystore(
+      user,
+      accessTokenPayload.prm,
+      refreshTokenPayload.prm,
+    );
+
+    if (!keystore) throw new UnauthorizedException('Invalid access token');
+    await this.removeKeystore(keystore._id);
+
+    const tokens = await this.createTokens(user);
 
     return { user: user, tokens: tokens };
   }
 
   private async createTokens(
     user: User,
-    accessTokenKey: string,
-    refreshTokenKey: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const tokenConfig =
       this.configService.getOrThrow<TokenConfig>(TokenConfigName);
+
+    const accessTokenKey = randomBytes(64).toString('hex');
+    const refreshTokenKey = randomBytes(64).toString('hex');
+
+    await this.createKeystore(user, accessTokenKey, refreshTokenKey);
 
     const accessTokenPayload = new TokenPayload(
       tokenConfig.issuer,
@@ -86,11 +120,29 @@ export class AuthService {
     };
   }
 
+  validatePayload(payload: TokenPayload) {
+    const tokenConfig =
+      this.configService.getOrThrow<TokenConfig>(TokenConfigName);
+    if (
+      !payload ||
+      !payload.iss ||
+      !payload.sub ||
+      !payload.aud ||
+      !payload.prm ||
+      payload.iss !== tokenConfig.issuer ||
+      payload.aud !== tokenConfig.audience ||
+      !Types.ObjectId.isValid(payload.sub)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   private async createKeystore(
     client: User,
     primaryKey: string,
     secondaryKey: string,
-  ): Promise<Keystore> {
+  ) {
     const keystore = await this.keystoreModel.create({
       client: client,
       primaryKey: primaryKey,
@@ -110,11 +162,31 @@ export class AuthService {
       .exec();
   }
 
-  private async signToken(payload: TokenPayload): Promise<string> {
+  private async findTokensKeystore(
+    client: User,
+    primaryKey: string,
+    secondaryKey: string,
+  ) {
+    return this.keystoreModel
+      .findOne({
+        client: client,
+        primaryKey: primaryKey,
+        secondaryKey: secondaryKey,
+        status: true,
+      })
+      .lean()
+      .exec();
+  }
+
+  private async removeKeystore(id: Types.ObjectId) {
+    return this.keystoreModel.findByIdAndDelete(id).lean().exec();
+  }
+
+  private async signToken(payload: TokenPayload) {
     return this.jwtService.signAsync({ ...payload });
   }
 
-  async verifyToken(token: string): Promise<TokenPayload> {
+  async verifyToken(token: string) {
     try {
       return await this.jwtService.verifyAsync<TokenPayload>(token);
     } catch (error) {
@@ -123,7 +195,7 @@ export class AuthService {
     }
   }
 
-  private decodeToken(token: string): TokenPayload {
+  private decodeToken(token: string) {
     return this.jwtService.decode<TokenPayload>(token);
   }
 }
