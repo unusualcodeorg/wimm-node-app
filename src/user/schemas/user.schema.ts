@@ -14,7 +14,7 @@ export class User {
   @Prop({ select: false, trim: true, maxlength: 200 })
   deviceId?: string;
 
-  @Prop({ unique: true, required: true, trim: true })
+  @Prop({ unique: true, required: true, trim: true, select: false })
   email: string;
 
   @Prop({

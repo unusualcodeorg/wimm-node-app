@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { Role, RoleCode } from '../schemas/role.schema';
+import { Role, RoleCode } from '../../auth/schemas/role.schema';
 import { IsNotEmpty } from 'class-validator';
 import { IsMongoIdObject } from '../../core/validations/mongo.validation';
 
