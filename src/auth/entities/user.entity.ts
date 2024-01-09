@@ -1,11 +1,22 @@
 import { Types } from 'mongoose';
 import { User } from '../../user/schemas/user.schema';
+import { IsEmail, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
+import { IsMongoIdObject } from '../../core/validations/mongo.validation';
 
 export class UserEntity {
-  _id: Types.ObjectId;
-  email: string;
-  name?: string;
-  profilePicUrl?: string;
+  @IsMongoIdObject()
+  readonly _id: Types.ObjectId;
+
+  @IsEmail()
+  readonly email: string;
+
+  @IsNotEmpty()
+  @IsOptional()
+  readonly name?: string;
+
+  @IsUrl()
+  @IsOptional()
+  readonly profilePicUrl?: string;
 
   constructor(user: User) {
     this._id = user._id;

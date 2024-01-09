@@ -123,10 +123,10 @@ export class AuthService {
     const refreshToken = await this.signToken(refreshTokenPayload);
     if (!refreshToken) throw new InternalServerErrorException();
 
-    return {
+    return new TokensEntity({
       accessToken: accessToken,
       refreshToken: refreshToken,
-    };
+    });
   }
 
   validatePayload(payload: TokenPayload) {

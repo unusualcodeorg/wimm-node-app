@@ -1,9 +1,14 @@
 import { Types } from 'mongoose';
-import { Role } from '../schemas/role.schema';
+import { Role, RoleCode } from '../schemas/role.schema';
+import { IsNotEmpty } from 'class-validator';
+import { IsMongoIdObject } from '../../core/validations/mongo.validation';
 
 export class RoleEntity {
-  _id: Types.ObjectId;
-  code: string;
+  @IsMongoIdObject()
+  readonly _id: Types.ObjectId;
+
+  @IsNotEmpty()
+  readonly code: RoleCode;
 
   constructor(role: Role) {
     this._id = role._id;
