@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import serverConfig from './config/server.config';
 import { MessageModule } from './message/message.module';
-import { DatabaseFactory } from './database.factory';
+import { DatabaseFactory } from './setup/database.factory';
 import databaseConfig from './config/database.config';
 import { CoreModule } from './core/core.module';
 import authkeyConfig from './config/authkey.config';
@@ -11,6 +11,7 @@ import tokenConfig from './config/token.config';
 import { AuthModule } from './auth/auth.module';
 import diskConfig from './config/disk.config';
 import { FilesModule } from './files/files.module';
+import { WinstonLogger } from './setup/winston.logger';
 
 @Module({
   imports: [
@@ -32,6 +33,12 @@ import { FilesModule } from './files/files.module';
     AuthModule,
     MessageModule,
     FilesModule,
+  ],
+  providers: [
+    {
+      provide: 'Logger',
+      useClass: WinstonLogger,
+    },
   ],
 })
 export class AppModule {}
