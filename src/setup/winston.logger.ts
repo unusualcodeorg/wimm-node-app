@@ -44,7 +44,6 @@ export class WinstonLogger implements LoggerService {
         }),
         dailyRotateFile,
       ],
-      exceptionHandlers: [dailyRotateFile],
       exitOnError: false, // do not exit on handled exceptions
     });
   }
