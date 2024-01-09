@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import diskConfig from './config/disk.config';
 import { FilesModule } from './files/files.module';
 import { WinstonLogger } from './setup/winston.logger';
+import { ScrapperModule } from './scrapper/scrapper.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { WinstonLogger } from './setup/winston.logger';
     AuthModule,
     MessageModule,
     FilesModule,
+    ScrapperModule,
   ],
   providers: [
     {
