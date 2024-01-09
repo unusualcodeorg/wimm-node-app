@@ -15,6 +15,8 @@ import { Permissions } from '../core/decorators/permissions.decorator';
 import { Permission } from '../core/schemas/apikey.schema';
 import { ProtectedRequest } from '../core/http/request';
 import { TokenRefreshDto } from './dto/token-refresh.dto';
+import { SignInEntity } from './entities/sign-in.entity';
+import { TokensEntity } from './entities/tokens.entity';
 
 @Permissions([Permission.GENERAL])
 @Controller('auth')
@@ -24,22 +26,13 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login/basic')
-  async signIn(@Body() signInBasicDto: SignInBasicDto) {
+  async signIn(@Body() signInBasicDto: SignInBasicDto): Promise<SignInEntity> {
     const { user, tokens } = await this.authService.signIn(signInBasicDto);
-    return {
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        profilePicUrl: user.profilePicUrl,
-      },
-      roles: user.roles.map((role) => ({ _id: role._id, code: role.code })),
-      tokens: tokens,
-    };
+    return new SignInEntity(user, tokens);
   }
 
   @Delete('logout')
-  async signOut(@Request() request: ProtectedRequest) {
+  async signOut(@Request() request: ProtectedRequest): Promise<string> {
     await this.authService.signOut(request.keystore);
     return 'Logout sucess';
   }
@@ -49,7 +42,7 @@ export class AuthController {
   async tokenRefresh(
     @Request() request: ProtectedRequest,
     @Body() tokenRefreshDto: TokenRefreshDto,
-  ) {
+  ): Promise<TokensEntity> {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer' || token === undefined)
       throw new UnauthorizedException();

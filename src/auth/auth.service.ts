@@ -18,6 +18,7 @@ import { TokenConfig, TokenConfigName } from '../config/token.config';
 import { compare } from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { TokenRefreshDto } from './dto/token-refresh.dto';
+import { TokensEntity } from './entities/tokens.entity';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +29,9 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async signIn(signInBasicDto: SignInBasicDto) {
+  async signIn(
+    signInBasicDto: SignInBasicDto,
+  ): Promise<{ user: User; tokens: TokensEntity }> {
     const user = await this.userService.findByEmail(signInBasicDto.email);
     if (!user) throw new NotFoundException('User not found');
     if (!user.password)
@@ -46,7 +49,10 @@ export class AuthService {
     this.removeKeystore(keystore._id);
   }
 
-  async refreshToken(tokenRefreshDto: TokenRefreshDto, accessToken: string) {
+  async refreshToken(
+    tokenRefreshDto: TokenRefreshDto,
+    accessToken: string,
+  ): Promise<{ user: User; tokens: TokensEntity }> {
     const accessTokenPayload = this.decodeToken(accessToken);
     const validAccessToken = this.validatePayload(accessTokenPayload);
     if (!validAccessToken)
@@ -86,9 +92,7 @@ export class AuthService {
     return { user: user, tokens: tokens };
   }
 
-  private async createTokens(
-    user: User,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  private async createTokens(user: User): Promise<TokensEntity> {
     const tokenConfig =
       this.configService.getOrThrow<TokenConfig>(TokenConfigName);
 
