@@ -7,8 +7,8 @@ import { ProtectedRequest } from '../core/http/request';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RoleCode } from '../auth/schemas/role.schema';
 
-@Roles([RoleCode.VIEWER])
-@Permissions([Permission.GENERAL])
+@Roles([RoleCode.VIEWER]) // Example: how to add roles on entire controller.
+@Permissions([Permission.GENERAL]) // Example: how to add api key specific route restrictions.
 @Controller('contact')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}

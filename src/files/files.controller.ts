@@ -14,8 +14,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express, Response } from 'express';
-import { Permissions } from '../core/decorators/permissions.decorator';
-import { Permission } from '../core/schemas/apikey.schema';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RoleCode } from '../auth/schemas/role.schema';
 import { ProtectedRequest } from '../core/http/request';
@@ -23,7 +21,6 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { FilesService } from './files.service';
 
-@Permissions([Permission.GENERAL])
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}

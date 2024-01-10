@@ -11,14 +11,11 @@ import {
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { SignInBasicDto } from './dto/signin-basic.dto';
-import { Permissions } from '../core/decorators/permissions.decorator';
-import { Permission } from '../core/schemas/apikey.schema';
 import { ProtectedRequest } from '../core/http/request';
 import { TokenRefreshDto } from './dto/token-refresh.dto';
 import { SignInEntity } from './entities/sign-in.entity';
 import { TokensEntity } from './entities/tokens.entity';
 
-@Permissions([Permission.GENERAL])
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

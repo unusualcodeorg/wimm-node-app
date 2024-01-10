@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
 export enum Permission {
-  GENERAL = 'GENERAL',
+  GENERAL = 'GENERAL', // All api end points are allowed
   XYZ_SERVICE = 'XYZ_SERVICE',
 }
 

@@ -9,6 +9,7 @@ import { CoreService } from '../core.service';
 import { Reflector } from '@nestjs/core';
 import { Permissions } from '../decorators/permissions.decorator';
 import { PublicRequest } from '../http/request';
+import { Permission } from '../schemas/apikey.schema';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
@@ -18,7 +19,9 @@ export class ApiKeyGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const permissions = this.reflector.get(Permissions, context.getClass());
+    const permissions = this.reflector.get(Permissions, context.getClass()) ?? [
+      Permission.GENERAL,
+    ];
     if (!permissions) throw new ForbiddenException();
 
     const request = context.switchToHttp().getRequest<PublicRequest>();

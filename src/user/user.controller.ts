@@ -6,14 +6,11 @@ import {
   Put,
   Request,
 } from '@nestjs/common';
-import { Permission } from '../core/schemas/apikey.schema';
-import { Permissions } from '../core/decorators/permissions.decorator';
 import { UserService } from './user.service';
 import { ProtectedRequest } from '../core/http/request';
 import { UserEntity } from './entities/user.entity';
 import { UpdateProfileDto } from './dto/upadte-profile.dto';
 
-@Permissions([Permission.GENERAL])
 @Controller('profile')
 export class UserController {
   constructor(private readonly userService: UserService) {}
