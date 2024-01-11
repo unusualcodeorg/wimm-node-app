@@ -129,8 +129,8 @@ export class ${featureCaps} {
   })
   user: User;
 
-  @Prop({ required: true })
-  something: string;
+  @Prop({ default: true })
+  status: boolean;
 }
 
 export const ${featureCaps}Schema = SchemaFactory.createForClass(${featureCaps});
