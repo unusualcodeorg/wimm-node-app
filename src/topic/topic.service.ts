@@ -1,44 +1,82 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Topic } from './schemas/topic.schema';
+import { User } from '../user/schemas/user.schema';
+import { TopicSubscriptionDto } from './dto/topic-subsciption.dto';
+import { SubscriptionService } from '../subscription/subscription.service';
+import { CreateTopicDto } from './dto/create-topic.dto';
+import { UpdateTopicDto } from './dto/update-topic.dto';
+import { TopicInfoDto } from './dto/topic-info.dto';
+import { PaginationDto } from '../common/pagination.dto';
 
 @Injectable()
 export class TopicService {
   constructor(
     @InjectModel(Topic.name) private readonly topicModel: Model<Topic>,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   INFO_PARAMETERS = '-description -status';
 
-  async findById(id: Types.ObjectId): Promise<Topic | null> {
-    return this.topicModel.findOne({ _id: id, status: true }).lean().exec();
+  async findTopicSubsciption(
+    topicId: Types.ObjectId,
+    user: User,
+  ): Promise<TopicSubscriptionDto> {
+    const topic = await this.findById(topicId);
+    if (!topic) throw new NotFoundException('Topic not found');
+
+    const subscription =
+      await this.subscriptionService.findSubscriptionForUser(user);
+
+    const subscribedTopic = subscription?.topics.find((m) =>
+      topic._id.equals(m._id),
+    );
+
+    return new TopicSubscriptionDto(topic, subscribedTopic !== undefined);
   }
 
-  async create(topic: Topic): Promise<Topic> {
-    const created = await this.topicModel.create(topic);
+  async create(admin: User, createTopicDto: CreateTopicDto): Promise<Topic> {
+    const created = await this.topicModel.create({
+      ...createTopicDto,
+      createdBy: admin,
+      updatedBy: admin,
+    });
     return created.toObject();
   }
 
-  async update(topic: Topic): Promise<Topic | null> {
+  async update(
+    admin: User,
+    topicId: Types.ObjectId,
+    updateTopicDto: UpdateTopicDto,
+  ): Promise<Topic | null> {
+    const topic = await this.findById(topicId);
+    if (!topic) throw new NotFoundException('Topic not found');
+
     return this.topicModel
-      .findByIdAndUpdate(topic._id, topic, { new: true })
+      .findByIdAndUpdate(
+        topic._id,
+        {
+          ...updateTopicDto,
+          updatedBy: admin,
+        },
+        { new: true },
+      )
       .lean()
       .exec();
   }
 
-  async findTopicsPaginated(
-    pageNumber: number,
-    limit: number,
-  ): Promise<Topic[]> {
+  async delete(topicId: Types.ObjectId): Promise<Topic | null> {
+    const topic = await this.findById(topicId);
+    if (!topic) throw new NotFoundException('Topic not found');
     return this.topicModel
-      .find({ status: true })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
-      .select(this.INFO_PARAMETERS)
-      .sort({ updatedAt: -1 })
+      .findByIdAndUpdate(topic._id, { $set: { status: false } }, { new: true })
       .lean()
       .exec();
+  }
+
+  async findById(id: Types.ObjectId): Promise<Topic | null> {
+    return this.topicModel.findOne({ _id: id, status: true }).lean().exec();
   }
 
   async findByIds(ids: Types.ObjectId[]): Promise<Topic[]> {
@@ -49,8 +87,22 @@ export class TopicService {
       .exec();
   }
 
-  async search(query: string, limit: number): Promise<Topic[]> {
-    return this.topicModel
+  async findTopicsPaginated(
+    paginationDto: PaginationDto,
+  ): Promise<TopicInfoDto[]> {
+    const topics = await this.topicModel
+      .find({ status: true })
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
+      .select(this.INFO_PARAMETERS)
+      .sort({ updatedAt: -1 })
+      .lean()
+      .exec();
+    return topics.map((topic) => new TopicInfoDto(topic));
+  }
+
+  async search(query: string, limit: number): Promise<TopicInfoDto[]> {
+    const topics = await this.topicModel
       .find({
         $text: { $search: query, $caseSensitive: false },
         status: true,
@@ -59,10 +111,11 @@ export class TopicService {
       .limit(limit)
       .lean()
       .exec();
+    return topics.map((topic) => new TopicInfoDto(topic));
   }
 
-  async searchLike(query: string, limit: number): Promise<Topic[]> {
-    return this.topicModel
+  async searchLike(query: string, limit: number): Promise<TopicInfoDto[]> {
+    const topics = await this.topicModel
       .find()
       .and([
         { status: true },
@@ -77,37 +130,33 @@ export class TopicService {
       .limit(limit)
       .lean()
       .exec();
+
+    return topics.map((topic) => new TopicInfoDto(topic));
   }
 
-  async findRecommendedTopics(limit: number): Promise<Topic[]> {
-    return this.topicModel
+  async findRecommendedTopics(limit: number): Promise<TopicInfoDto[]> {
+    const topics = await this.topicModel
       .find({ status: true })
       .limit(limit)
       .select(this.INFO_PARAMETERS)
       .sort({ score: -1 })
       .lean()
       .exec();
+
+    return topics.map((topic) => new TopicInfoDto(topic));
   }
 
   async findRecommendedTopicsPaginated(
-    pageNumber: number,
-    limit: number,
-  ): Promise<Topic[]> {
-    return this.topicModel
+    paginationDto: PaginationDto,
+  ): Promise<TopicInfoDto[]> {
+    const topics = await this.topicModel
       .find({ status: true })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
       .select(this.INFO_PARAMETERS)
       .sort({ score: -1 })
       .lean()
       .exec();
-  }
-
-  async remove(topic: Topic): Promise<Topic | null> {
-    topic.status = false;
-    return this.topicModel
-      .findByIdAndUpdate(topic._id, { $set: { status: false } }, { new: true })
-      .lean()
-      .exec();
+    return topics.map((topic) => new TopicInfoDto(topic));
   }
 }

@@ -1,18 +1,19 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
+import { Controller, Get, Param, Request } from '@nestjs/common';
 import { TopicService } from './topic.service';
-import { CreateTopicDto } from './dto/create-topic.dto';
+import { Types } from 'mongoose';
 import { ProtectedRequest } from '../core/http/request';
+import { TopicSubscriptionDto } from './dto/topic-subsciption.dto';
+import { MongoIdTransformer } from '../common/mongoid.transformer';
 
 @Controller('topic')
 export class TopicController {
   constructor(private readonly topicService: TopicService) {}
 
-  @Post()
-  async create(
+  @Get('id/:id')
+  async findOne(
+    @Param('id', MongoIdTransformer) id: Types.ObjectId,
     @Request() request: ProtectedRequest,
-    @Body() createTopicDto: CreateTopicDto,
-  ) {
-    // await this.topicService.create(request.user, createTopicDto);
-    return 'success';
+  ): Promise<TopicSubscriptionDto> {
+    return this.topicService.findTopicSubsciption(id, request.user);
   }
 }
