@@ -14,6 +14,7 @@ import { RoleCode } from '../auth/schemas/role.schema';
 import { ProtectedRequest } from '../core/http/request';
 import { UpdateMentorDto } from './dto/update-mentor.dto';
 import { Types } from 'mongoose';
+import { MongoIdTransformer } from '../common/mongoid.transformer';
 
 @Roles([RoleCode.ADMIN])
 @Controller('mentor/admin')
@@ -30,7 +31,7 @@ export class MentorAdminController {
 
   @Put('id/:id')
   async update(
-    @Param('id') id: Types.ObjectId,
+    @Param('id', MongoIdTransformer) id: Types.ObjectId,
     @Request() request: ProtectedRequest,
     @Body() updateMentorDto: UpdateMentorDto,
   ) {
@@ -38,7 +39,7 @@ export class MentorAdminController {
   }
 
   @Delete('id/:id')
-  async delete(@Param('id') id: Types.ObjectId) {
+  async delete(@Param('id', MongoIdTransformer) id: Types.ObjectId) {
     return await this.mentorService.delete(id);
   }
 }

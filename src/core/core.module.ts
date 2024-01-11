@@ -8,7 +8,6 @@ import { ApiKeyGuard } from './guards/apikey.guard';
 import { ExpectionHandler } from './interceptors/exception.handler';
 import { ResponseValidation } from './interceptors/response.validations';
 import { ConfigModule } from '@nestjs/config';
-import { MongoIdTransformerPipe } from './interceptors/mongoid.transformer';
 
 @Module({
   imports: [
@@ -20,10 +19,6 @@ import { MongoIdTransformerPipe } from './interceptors/mongoid.transformer';
     { provide: APP_INTERCEPTOR, useClass: ResponseValidation },
     { provide: APP_FILTER, useClass: ExpectionHandler },
     { provide: APP_GUARD, useClass: ApiKeyGuard },
-    {
-      provide: APP_PIPE,
-      useClass: MongoIdTransformerPipe,
-    },
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
