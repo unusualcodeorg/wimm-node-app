@@ -45,3 +45,8 @@ export class Topic {
 }
 
 export const TopicSchema = SchemaFactory.createForClass(Topic);
+
+TopicSchema.index(
+  { name: 'text', title: 'text' },
+  { weights: { name: 3, title: 1 }, background: false },
+);

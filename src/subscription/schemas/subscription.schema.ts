@@ -17,6 +17,8 @@ export class Subscription {
     type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     required: true,
+    unique: true,
+    index: true,
   })
   user: User;
 
