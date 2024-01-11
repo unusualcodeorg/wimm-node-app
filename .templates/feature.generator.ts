@@ -52,22 +52,22 @@ async function generateService(featureDir: string, featureName: string) {
   const template = `import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Test } from './schemas/test.schema';
-import { CreateTestDto } from './dto/create-test.dto';
+import { ${featureCaps} } from './schemas/${featureLower}.schema';
+import { Create${featureCaps}Dto } from './dto/create-${featureLower}.dto';
 import { User } from '../user/schemas/user.schema';
 
 @Injectable()
-export class TestService {
+export class ${featureCaps}Service {
   constructor(
-    @InjectModel(Test.name) private readonly testModel: Model<Test>,
+    @InjectModel(${featureCaps}.name) private readonly ${featureLower}Model: Model<${featureCaps}>,
   ) {}
 
-  async create(user: User, createTestDto: CreateTestDto): Promise<Test> {
-    const test = await this.testModel.create({
-      ...createTestDto,
+  async create(user: User, create${featureCaps}Dto: Create${featureCaps}Dto): Promise<${featureCaps}> {
+    const ${featureLower} = await this.${featureLower}Model.create({
+      ...create${featureCaps}Dto,
       user: user,
     });
-    return test;
+    return ${featureLower};
   }
 }
 `;
@@ -80,20 +80,20 @@ async function generateController(featureDir: string, featureName: string) {
   const controlerPath = join(featureDir, `${featureLower}.controller.ts`);
 
   const template = `import { Body, Controller, Post, Request } from '@nestjs/common';
-import { TestService } from './test.service';
-import { CreateTestDto } from './dto/create-test.dto';
+import { ${featureCaps}Service } from './${featureLower}.service';
+import { Create${featureCaps}Dto } from './dto/create-${featureLower}.dto';
 import { ProtectedRequest } from '../core/http/request';
 
-@Controller('test')
-export class TestController {
-  constructor(private readonly testService: TestService) {}
+@Controller('${featureLower}')
+export class ${featureCaps}Controller {
+  constructor(private readonly ${featureLower}Service: ${featureCaps}Service) {}
 
   @Post()
   async create(
     @Request() request: ProtectedRequest,
-    @Body() createTestDto: CreateTestDto,
+    @Body() create${featureCaps}Dto: Create${featureCaps}Dto,
   ) {
-    await this.testService.create(request.user, createTestDto);
+    await this.${featureLower}Service.create(request.user, create${featureCaps}Dto);
     return 'success';
   }
 }
