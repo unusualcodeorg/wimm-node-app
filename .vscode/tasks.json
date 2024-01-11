@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Template: Generate Feature",
+      "type": "shell",
+      "command": "npx nest generate ${input:featureName} & npx nest generate controller ${input:featureName} --no-spec & npx nest generate service ${input:featureName} --no-spec",
+      "presentation": {
+        "reveal": "never",
+        "panel": "shared"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "featureName",
+      "description": "Feature name to create?"
+    }
+  ]
+}
