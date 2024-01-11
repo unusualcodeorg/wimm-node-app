@@ -8,7 +8,7 @@ import {
   IsUrl,
   ValidateNested,
 } from 'class-validator';
-import { IsMongoIdObject } from '../../utils/mongo.validation';
+import { IsMongoIdObject } from '../../common/mongo.validation';
 import { RoleDto } from './role.dto';
 
 export class UserDto {

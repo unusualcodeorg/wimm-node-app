@@ -5,13 +5,14 @@ import { MentorController } from './mentor.controller';
 import { MentorService } from './mentor.service';
 import { SubscriptionModule } from '../subscription/subscription.module';
 import { MentorAdminController } from './mentor.admin.controller';
+import { MentorsController } from './mentors.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Mentor.name, schema: MentorSchema }]),
     SubscriptionModule,
   ],
-  controllers: [MentorController, MentorAdminController],
+  controllers: [MentorController, MentorAdminController, MentorsController],
   providers: [MentorService],
   exports: [MentorService],
 })

@@ -3,10 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Mentor } from './schemas/mentor.schema';
 import { SubscriptionService } from '../subscription/subscription.service';
-import { MentorDto } from './dto/mentor.dto';
 import { User } from '../user/schemas/user.schema';
 import { CreateMentorDto } from './dto/create-mentor.dto';
 import { UpdateMentorDto } from './dto/update-mentor.dto';
+import { MentorSubscriptionDto } from './dto/mentor-subsciption.dto';
+import { MentorInfoDto } from './dto/mentor-info.dto';
+import { PaginationDto } from '../common/pagination.dto';
 
 @Injectable()
 export class MentorService {
@@ -17,7 +19,10 @@ export class MentorService {
 
   INFO_PARAMETERS = '-description -status';
 
-  async findMentor(mentorId: Types.ObjectId, user: User): Promise<MentorDto> {
+  async findMentorSubsciption(
+    mentorId: Types.ObjectId,
+    user: User,
+  ): Promise<MentorSubscriptionDto> {
     const mentor = await this.findById(mentorId);
     if (!mentor) throw new NotFoundException('Mentor not found');
 
@@ -28,11 +33,7 @@ export class MentorService {
       mentor._id.equals(m._id),
     );
 
-    return new MentorDto(mentor, subscribedTopic !== undefined);
-  }
-
-  async findById(id: Types.ObjectId): Promise<Mentor | null> {
-    return this.mentorModel.findOne({ _id: id, status: true }).lean().exec();
+    return new MentorSubscriptionDto(mentor, subscribedTopic !== undefined);
   }
 
   async create(admin: User, createMentorDto: CreateMentorDto): Promise<Mentor> {
@@ -74,18 +75,8 @@ export class MentorService {
       .exec();
   }
 
-  async findMentorsPaginated(
-    pageNumber: number,
-    limit: number,
-  ): Promise<Mentor[]> {
-    return this.mentorModel
-      .find({ status: true })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
-      .select(this.INFO_PARAMETERS)
-      .sort({ updatedAt: -1 })
-      .lean()
-      .exec();
+  async findById(id: Types.ObjectId): Promise<Mentor | null> {
+    return this.mentorModel.findOne({ _id: id, status: true }).lean().exec();
   }
 
   async findByIds(ids: Types.ObjectId[]): Promise<Mentor[]> {
@@ -96,8 +87,22 @@ export class MentorService {
       .exec();
   }
 
-  async search(query: string, limit: number): Promise<Mentor[]> {
-    return this.mentorModel
+  async findMentorsPaginated(
+    paginationDto: PaginationDto,
+  ): Promise<MentorInfoDto[]> {
+    const mentors = await this.mentorModel
+      .find({ status: true })
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
+      .select(this.INFO_PARAMETERS)
+      .sort({ updatedAt: -1 })
+      .lean()
+      .exec();
+    return mentors.map((mentor) => new MentorInfoDto(mentor));
+  }
+
+  async search(query: string, limit: number): Promise<MentorInfoDto[]> {
+    const mentors = await this.mentorModel
       .find({
         $text: { $search: query, $caseSensitive: false },
         status: true,
@@ -106,10 +111,11 @@ export class MentorService {
       .limit(limit)
       .lean()
       .exec();
+    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 
-  async searchLike(query: string, limit: number): Promise<Mentor[]> {
-    return this.mentorModel
+  async searchLike(query: string, limit: number): Promise<MentorInfoDto[]> {
+    const mentors = await this.mentorModel
       .find()
       .and([
         { status: true },
@@ -125,29 +131,31 @@ export class MentorService {
       .limit(limit)
       .lean()
       .exec();
+    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 
-  async findRecommendedMentors(limit: number): Promise<Mentor[]> {
-    return this.mentorModel
+  async findRecommendedMentors(limit: number): Promise<MentorInfoDto[]> {
+    const mentors = await this.mentorModel
       .find({ status: true })
       .limit(limit)
       .select(this.INFO_PARAMETERS)
       .sort({ score: -1 })
       .lean()
       .exec();
+    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 
   async findRecommendedMentorsPaginated(
-    pageNumber: number,
-    limit: number,
-  ): Promise<Mentor[]> {
-    return this.mentorModel
+    paginationDto: PaginationDto,
+  ): Promise<MentorInfoDto[]> {
+    const mentors = await this.mentorModel
       .find({ status: true })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
       .select(this.INFO_PARAMETERS)
       .sort({ score: -1 })
       .lean()
       .exec();
+    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 }

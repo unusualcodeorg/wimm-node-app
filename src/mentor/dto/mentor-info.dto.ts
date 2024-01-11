@@ -1,15 +1,12 @@
-import { IsBoolean, IsNotEmpty, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsUrl } from 'class-validator';
 import { Types } from 'mongoose';
-import { IsMongoIdObject } from '../../utils/mongo.validation';
+import { IsMongoIdObject } from '../../common/mongo.validation';
 import { Mentor } from '../schemas/mentor.schema';
-import { copy } from '../../utils/copier';
+import { copy } from '../../common/copier';
 
-export class MentorDto {
+export class MentorInfoDto {
   @IsMongoIdObject()
   _id: Types.ObjectId;
-
-  @IsBoolean()
-  subscribed: boolean;
 
   @IsNotEmpty()
   name: string;
@@ -29,7 +26,7 @@ export class MentorDto {
   @IsUrl()
   coverImgUrl: string;
 
-  constructor(mentor: Mentor, subscribed: boolean) {
+  constructor(mentor: Mentor) {
     const props = copy(mentor, [
       '_id',
       'name',
@@ -39,6 +36,6 @@ export class MentorDto {
       'description',
       'coverImgUrl',
     ]);
-    Object.assign(this, { ...props, subscribed: subscribed });
+    Object.assign(this, props);
   }
 }

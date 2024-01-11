@@ -2,8 +2,7 @@ import { Controller, Get, Param, Request } from '@nestjs/common';
 import { MentorService } from './mentor.service';
 import { Types } from 'mongoose';
 import { ProtectedRequest } from '../core/http/request';
-import { MongoIdValidationPipe } from '../utils/mongoid.pipe';
-import { MentorDto } from './dto/mentor.dto';
+import { MentorSubscriptionDto } from './dto/mentor-subsciption.dto';
 
 @Controller('mentor')
 export class MentorController {
@@ -11,9 +10,9 @@ export class MentorController {
 
   @Get('id/:id')
   async findOne(
-    @Param('id', MongoIdValidationPipe) id: string,
+    @Param('id') id: Types.ObjectId,
     @Request() request: ProtectedRequest,
-  ): Promise<MentorDto> {
-    return this.mentorService.findMentor(new Types.ObjectId(id), request.user);
+  ): Promise<MentorSubscriptionDto> {
+    return this.mentorService.findMentorSubsciption(id, request.user);
   }
 }

@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { Role, RoleCode } from '../../auth/schemas/role.schema';
 import { IsNotEmpty } from 'class-validator';
-import { IsMongoIdObject } from '../../utils/mongo.validation';
+import { IsMongoIdObject } from '../../common/mongo.validation';
 
 export class RoleDto {
   @IsMongoIdObject()
