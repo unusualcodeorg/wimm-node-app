@@ -13,8 +13,8 @@ import { Public } from './decorators/public.decorator';
 import { SignInBasicDto } from './dto/signin-basic.dto';
 import { ProtectedRequest } from '../core/http/request';
 import { TokenRefreshDto } from './dto/token-refresh.dto';
-import { SignInEntity } from './entities/sign-in.entity';
-import { TokensEntity } from './entities/tokens.entity';
+import { UserAuthDto } from './dto/user-auth.dto';
+import { UserTokensDto } from './dto/user-tokens.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,9 +23,9 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login/basic')
-  async signIn(@Body() signInBasicDto: SignInBasicDto): Promise<SignInEntity> {
+  async signIn(@Body() signInBasicDto: SignInBasicDto): Promise<UserAuthDto> {
     const { user, tokens } = await this.authService.signIn(signInBasicDto);
-    return new SignInEntity(user, tokens);
+    return new UserAuthDto(user, tokens);
   }
 
   @Delete('logout')
@@ -39,7 +39,7 @@ export class AuthController {
   async tokenRefresh(
     @Request() request: ProtectedRequest,
     @Body() tokenRefreshDto: TokenRefreshDto,
-  ): Promise<TokensEntity> {
+  ): Promise<UserTokensDto> {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer' || token === undefined)
       throw new UnauthorizedException();

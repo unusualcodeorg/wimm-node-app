@@ -1,13 +1,13 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class TokensEntity {
+export class UserTokensDto {
   @IsNotEmpty()
   readonly accessToken: string;
 
   @IsNotEmpty()
   readonly refreshToken: string;
 
-  constructor(tokens: TokensEntity) {
+  constructor(tokens: UserTokensDto) {
     Object.assign(this, tokens);
   }
 }

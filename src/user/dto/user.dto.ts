@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { User } from '../../user/schemas/user.schema';
+import { User } from '../schemas/user.schema';
 import {
   IsArray,
   IsEmail,
@@ -9,9 +9,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { IsMongoIdObject } from '../../core/validations/mongo.validation';
-import { RoleEntity } from './role.entity';
+import { RoleDto } from './role.dto';
 
-export class UserEntity {
+export class UserDto {
   @IsMongoIdObject()
   readonly _id: Types.ObjectId;
 
@@ -32,7 +32,7 @@ export class UserEntity {
 
   @ValidateNested()
   @IsArray()
-  readonly roles: RoleEntity[];
+  readonly roles: RoleDto[];
 
   constructor(user: User) {
     this._id = user._id;
@@ -40,6 +40,6 @@ export class UserEntity {
     this.email = user.email;
     this.profilePicUrl = user.profilePicUrl;
     this.tagline = user.tagline;
-    this.roles = user.roles.map((role) => new RoleEntity(role));
+    this.roles = user.roles.map((role) => new RoleDto(role));
   }
 }

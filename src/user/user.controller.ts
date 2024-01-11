@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ProtectedRequest } from '../core/http/request';
-import { UserEntity } from './entities/user.entity';
+import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/upadte-profile.dto';
 
 @Controller('profile')
@@ -18,7 +18,7 @@ export class UserController {
   async findMy(@Request() request: ProtectedRequest) {
     const profile = await this.userService.findPrivateProfile(request.user);
     if (!profile) throw new NotFoundException('Profile Not Found');
-    return new UserEntity(profile);
+    return new UserDto(profile);
   }
 
   @Put()

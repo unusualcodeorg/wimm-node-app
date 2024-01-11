@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { ContentCategory } from '../content/schemas/content.schema';
-import { MetaContentEntity } from './entities/meta-content.entity';
+import { MetaContentEntity } from './dto/meta-content.dto';
 
 @Injectable()
 export class ScrapperService {

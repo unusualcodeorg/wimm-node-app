@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { UpdateProfileDto } from './dto/upadte-profile.dto';
-import { UserEntity } from './entities/user.entity';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -20,7 +20,7 @@ export class UserService {
       updateProfileDto.profilePicUrl &&
       updateProfileDto.tagline;
 
-    if (!something) return new UserEntity(user);
+    if (!something) return new UserDto(user);
 
     const updated = await this.updateUserInfo({
       _id: user._id,
@@ -29,7 +29,7 @@ export class UserService {
 
     if (!updated) throw new InternalServerErrorException();
 
-    return new UserEntity(updated);
+    return new UserDto(updated);
   }
 
   async findUserById(id: Types.ObjectId) {

@@ -3,7 +3,7 @@ import { Role, RoleCode } from '../../auth/schemas/role.schema';
 import { IsNotEmpty } from 'class-validator';
 import { IsMongoIdObject } from '../../core/validations/mongo.validation';
 
-export class RoleEntity {
+export class RoleDto {
   @IsMongoIdObject()
   readonly _id: Types.ObjectId;
 
