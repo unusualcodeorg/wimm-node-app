@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { ContentCategory } from '../content/schemas/content.schema';
+import { Category as ContentCategory } from '../content/schemas/content.schema';
 import { MetaContentEntity } from './dto/meta-content.dto';
 
 @Injectable()

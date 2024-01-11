@@ -53,3 +53,5 @@ MentorSchema.index(
   { name: 'text', occupation: 'text', title: 'text' },
   { weights: { name: 5, occupation: 1, title: 2 }, background: false },
 );
+
+MentorSchema.index({ _id: 1, status: 1 });

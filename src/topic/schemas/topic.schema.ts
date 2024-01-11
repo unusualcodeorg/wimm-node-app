@@ -50,3 +50,5 @@ TopicSchema.index(
   { name: 'text', title: 'text' },
   { weights: { name: 3, title: 1 }, background: false },
 );
+
+TopicSchema.index({ _id: 1, status: 1 });

@@ -16,6 +16,7 @@ import { ScrapperModule } from './scrapper/scrapper.module';
 import { MentorModule } from './mentor/mentor.module';
 import { TopicModule } from './topic/topic.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { ContentModule } from './content/content.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     MentorModule,
     TopicModule,
     SubscriptionModule,
+    ContentModule,
   ],
   providers: [
     {
