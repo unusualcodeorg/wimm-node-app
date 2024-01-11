@@ -10,9 +10,13 @@ import { TokenExpiredError } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { StatusCode } from '../http/response';
 import { isArray } from 'class-validator';
+import { ConfigService } from '@nestjs/config';
+import { ServerConfig, ServerConfigName } from '../../config/server.config';
 
 @Catch()
 export class ExpectionHandler implements ExceptionFilter {
+  constructor(private readonly configService: ConfigService) {}
+
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -41,6 +45,10 @@ export class ExpectionHandler implements ExceptionFilter {
       statusCode = StatusCode.INVALID_ACCESS_TOKEN;
       response.appendHeader('instruction', 'refresh_token');
       message = 'Token Expired';
+    } else {
+      const serverConfig =
+        this.configService.getOrThrow<ServerConfig>(ServerConfigName);
+      if (serverConfig.nodeEnv === 'development') message = exception.message;
     }
 
     response.status(status).json({

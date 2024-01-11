@@ -37,6 +37,7 @@ import { ${featureCaps}Service } from './${featureLower}.service';
   ],
   controllers: [${featureCaps}Controller],
   providers: [${featureCaps}Service],
+  exports: [${featureCaps}Service]
 })
 export class ${featureCaps}Module {}
 `;

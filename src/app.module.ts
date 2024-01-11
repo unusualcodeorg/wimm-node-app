@@ -14,6 +14,8 @@ import { FilesModule } from './files/files.module';
 import { WinstonLogger } from './setup/winston.logger';
 import { ScrapperModule } from './scrapper/scrapper.module';
 import { MentorModule } from './mentor/mentor.module';
+import { TopicModule } from './topic/topic.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { MentorModule } from './mentor/mentor.module';
     FilesModule,
     ScrapperModule,
     MentorModule,
+    TopicModule,
+    SubscriptionModule,
   ],
   providers: [
     {

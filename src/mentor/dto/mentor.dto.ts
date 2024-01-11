@@ -1,6 +1,6 @@
 import { IsBoolean, IsNotEmpty, IsUrl } from 'class-validator';
 import { Types } from 'mongoose';
-import { IsMongoIdObject } from '../../core/validations/mongo.validation';
+import { IsMongoIdObject } from '../../utils/mongo.validation';
 import { Mentor } from '../schemas/mentor.schema';
 import { copy } from '../../utils/copier';
 

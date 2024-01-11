@@ -1,10 +1,39 @@
-import { IsNotEmpty, MaxLength } from 'class-validator';
+import {
+  IsOptional,
+  IsUrl,
+  Max,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class CreateMentorDto {
-  @IsNotEmpty()
-  readonly property1: string;
+  @MinLength(3)
+  @MaxLength(50)
+  readonly name: string;
 
-  @IsNotEmpty()
-  @MaxLength(1000)
-  readonly property2: string;
+  @MinLength(3)
+  @MaxLength(50)
+  readonly occupation: string;
+
+  @MinLength(3)
+  @MaxLength(300)
+  readonly title: string;
+
+  @MinLength(3)
+  @MaxLength(10000)
+  readonly description: string;
+
+  @IsUrl()
+  @MaxLength(300)
+  readonly thumbnail: string;
+
+  @IsUrl()
+  @MaxLength(300)
+  readonly coverImgUrl: string;
+
+  @IsOptional()
+  @Min(0)
+  @Max(1)
+  readonly score: number;
 }

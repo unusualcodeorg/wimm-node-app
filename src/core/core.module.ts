@@ -7,10 +7,12 @@ import { ApiKey, ApiKeySchema } from './schemas/apikey.schema';
 import { ApiKeyGuard } from './guards/apikey.guard';
 import { ExpectionHandler } from './interceptors/exception.handler';
 import { ResponseValidation } from './interceptors/response.validations';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: ApiKey.name, schema: ApiKeySchema }]),
+    ConfigModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ResponseTransformer },

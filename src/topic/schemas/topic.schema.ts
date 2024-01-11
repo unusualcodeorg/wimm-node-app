@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { User } from '../../user/schemas/user.schema';
 
-export type MentorDocument = HydratedDocument<Mentor>;
+export type TopicDocument = HydratedDocument<Topic>;
 
-@Schema({ collection: 'mentors', versionKey: false, timestamps: true })
-export class Mentor {
+@Schema({ collection: 'topics', versionKey: false, timestamps: true })
+export class Topic {
   readonly _id: Types.ObjectId;
 
   @Prop({ required: true, maxlength: 50, trim: true })
@@ -16,9 +16,6 @@ export class Mentor {
 
   @Prop({ required: true, maxlength: 300, trim: true })
   thumbnail: string;
-
-  @Prop({ required: true, maxlength: 50, trim: true })
-  occupation: string;
 
   @Prop({ required: true, maxlength: 10000, trim: true })
   description: string;
@@ -47,4 +44,4 @@ export class Mentor {
   status: boolean;
 }
 
-export const MentorSchema = SchemaFactory.createForClass(Mentor);
+export const TopicSchema = SchemaFactory.createForClass(Topic);
