@@ -13,4 +13,11 @@ export class MentorsController {
   ): Promise<MentorInfoDto[]> {
     return this.mentorService.findMentorsPaginated(paginationDto);
   }
+
+  @Get('recommendation')
+  async findRecomended(
+    @Query() paginationDto: PaginationDto,
+  ): Promise<MentorInfoDto[]> {
+    return this.mentorService.findRecommendedMentorsPaginated(paginationDto);
+  }
 }

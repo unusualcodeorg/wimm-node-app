@@ -1,24 +1,23 @@
 import {
-  PipeTransform,
-  Injectable,
   BadRequestException,
   ArgumentMetadata,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Types } from 'mongoose';
 
-@Injectable()
-export class MongoIdTransformer implements PipeTransform<any> {
+export class MongoIdTransformerPipe extends ValidationPipe {
   transform(value: any, metadata: ArgumentMetadata): any {
-    if (typeof value !== 'string') return value;
-
-    if (metadata.metatype?.name === 'ObjectId') {
+    if (
+      metadata.type === 'param' &&
+      typeof value === 'string' &&
+      metadata.metatype?.name === 'ObjectId'
+    ) {
       if (!Types.ObjectId.isValid(value)) {
         const key = metadata?.data ?? '';
         throw new BadRequestException(`${key} must be a mongodb id`);
       }
-      return new Types.ObjectId(value);
+      return super.transform(new Types.ObjectId(value), metadata);
     }
-
-    return value;
+    return super.transform(value, metadata);
   }
 }
