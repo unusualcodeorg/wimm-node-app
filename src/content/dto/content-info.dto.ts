@@ -64,7 +64,7 @@ export class ContentInfoDto {
   @ValidateNested()
   createdBy: UserInfoDto;
 
-  constructor(content: Content, liked: boolean) {
+  constructor(content: Content, liked: boolean = false) {
     const props = copy(content, [
       '_id',
       'category',

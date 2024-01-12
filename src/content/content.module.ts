@@ -6,6 +6,7 @@ import { ContentService } from './content.service';
 import { ContentAdminController } from './content-admin.controller';
 import { TopicModule } from '../topic/topic.module';
 import { MentorModule } from '../mentor/mentor.module';
+import { ContentPrivateController } from './content-private.controller';
 
 @Module({
   imports: [
@@ -13,7 +14,11 @@ import { MentorModule } from '../mentor/mentor.module';
     TopicModule,
     MentorModule,
   ],
-  controllers: [ContentController, ContentAdminController],
+  controllers: [
+    ContentController,
+    ContentAdminController,
+    ContentPrivateController,
+  ],
   providers: [ContentService],
   exports: [ContentService],
 })

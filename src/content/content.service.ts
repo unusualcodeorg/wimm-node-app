@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Content } from './schemas/content.schema';
+import { Category, Content } from './schemas/content.schema';
 import { User } from '../user/schemas/user.schema';
 import { Mentor } from '../mentor/schemas/mentor.schema';
 import { Topic } from '../topic/schemas/topic.schema';
@@ -11,6 +15,7 @@ import { CreateContentDto } from './dto/create-content.dto';
 import { TopicService } from '../topic/topic.service';
 import { MentorService } from '../mentor/mentor.service';
 import { UpdateContentDto } from './dto/update-content.dto';
+import { CreatePrivateContentDto } from './dto/create-private-content.dto';
 
 @Injectable()
 export class ContentService {
@@ -47,6 +52,30 @@ export class ContentService {
     });
 
     return created.toObject();
+  }
+
+  async createPrivateContent(
+    createPrivateContentDto: CreatePrivateContentDto,
+    user: User,
+  ): Promise<ContentInfoDto> {
+    if (
+      (createPrivateContentDto.extra.includes('https://youtu.be') ||
+        createPrivateContentDto.extra.includes(
+          'https://www.youtube.com/watch',
+        )) &&
+      createPrivateContentDto.category != Category.YOUTUBE
+    ) {
+      throw new BadRequestException('Content category must be YOUTUBE');
+    }
+
+    const created = await this.contentModel.create({
+      ...createPrivateContentDto,
+      private: true,
+      createdBy: user,
+      updatedBy: user,
+    });
+
+    return new ContentInfoDto({ ...created.toObject(), createdBy: user });
   }
 
   async updateContent(
@@ -95,32 +124,6 @@ export class ContentService {
       general: true,
       private: false,
     });
-  }
-
-  private async validateTopicsMentors(
-    topics: Types.ObjectId[] | undefined,
-    mentors: Types.ObjectId[] | undefined,
-  ) {
-    const topicIds: Types.ObjectId[] = [];
-    const mentorIds: Types.ObjectId[] = [];
-
-    if (topics) {
-      for (const topicId of topics) {
-        if (!this.topicService.exists(topicId))
-          throw new NotFoundException(`Topic ${topicId} not found`);
-        topicIds.push(topicId);
-      }
-    }
-
-    if (mentors) {
-      for (const mentorId of mentors) {
-        if (!this.mentorService.exists(mentorId))
-          throw new NotFoundException(`Mentor ${mentorId} not found`);
-        mentorIds.push(mentorId);
-      }
-    }
-
-    return { topics: topicIds, mentors: mentorIds };
   }
 
   async findOne(id: Types.ObjectId, user: User): Promise<ContentInfoDto> {
@@ -551,6 +554,32 @@ export class ContentService {
       .select('-status -private')
       .lean()
       .exec();
+  }
+
+  private async validateTopicsMentors(
+    topics: Types.ObjectId[] | undefined,
+    mentors: Types.ObjectId[] | undefined,
+  ) {
+    const topicIds: Types.ObjectId[] = [];
+    const mentorIds: Types.ObjectId[] = [];
+
+    if (topics) {
+      for (const topicId of topics) {
+        if (!this.topicService.exists(topicId))
+          throw new NotFoundException(`Topic ${topicId} not found`);
+        topicIds.push(topicId);
+      }
+    }
+
+    if (mentors) {
+      for (const mentorId of mentors) {
+        if (!this.mentorService.exists(mentorId))
+          throw new NotFoundException(`Mentor ${mentorId} not found`);
+        mentorIds.push(mentorId);
+      }
+    }
+
+    return { topics: topicIds, mentors: mentorIds };
   }
 
   private statsBoostUp(content: Content) {
