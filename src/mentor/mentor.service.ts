@@ -75,6 +75,11 @@ export class MentorService {
       .exec();
   }
 
+  async exists(id: Types.ObjectId): Promise<boolean> {
+    const exists = await this.mentorModel.exists(id);
+    return exists != null;
+  }
+
   async findById(id: Types.ObjectId): Promise<Mentor | null> {
     return this.mentorModel.findOne({ _id: id, status: true }).lean().exec();
   }

@@ -11,17 +11,14 @@ export class TopicInfoDto {
   @IsNotEmpty()
   name: string;
 
-  @IsUrl()
-  thumbnail: string;
-
-  @IsNotEmpty()
-  occupation: string;
-
   @IsNotEmpty()
   title: string;
 
   @IsNotEmpty()
   description: string;
+
+  @IsUrl()
+  thumbnail: string;
 
   @IsUrl()
   coverImgUrl: string;

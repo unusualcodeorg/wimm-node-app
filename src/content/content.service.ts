@@ -7,12 +7,56 @@ import { Mentor } from '../mentor/schemas/mentor.schema';
 import { Topic } from '../topic/schemas/topic.schema';
 import { Subscription } from '../subscription/schemas/subscription.schema';
 import { ContentInfoDto } from './dto/content-info.dto';
+import { CreateContentDto } from './dto/create-content.dto';
+import { TopicService } from '../topic/topic.service';
+import { MentorService } from '../mentor/mentor.service';
 
 @Injectable()
 export class ContentService {
   constructor(
     @InjectModel(Content.name) private readonly contentModel: Model<Content>,
+    private readonly topicService: TopicService,
+    private readonly mentorService: MentorService,
   ) {}
+
+  async create(
+    createContentDto: CreateContentDto,
+    admin: User,
+  ): Promise<Content> {
+    const topicIds: Types.ObjectId[] = [];
+    const mentorIds: Types.ObjectId[] = [];
+
+    if (createContentDto.topics) {
+      for (const topicId of createContentDto.topics) {
+        if (!this.topicService.exists(topicId))
+          throw new NotFoundException(`Topic ${topicId} not found`);
+        topicIds.push(topicId);
+      }
+    }
+
+    if (createContentDto.mentors) {
+      for (const mentorId of createContentDto.mentors) {
+        if (!this.mentorService.exists(mentorId))
+          throw new NotFoundException(`Mentor ${mentorId} not found`);
+        mentorIds.push(mentorId);
+      }
+    }
+
+    if (topicIds.length == 0 && mentorIds.length == 0)
+      throw new NotFoundException(
+        'Content must have atleast a mentor or a topic',
+      );
+
+    const created = await this.contentModel.create({
+      ...createContentDto,
+      topics: topicIds,
+      mentors: mentorIds,
+      createdBy: admin,
+      updatedBy: admin,
+    });
+
+    return created.toObject();
+  }
 
   async findOne(id: Types.ObjectId, user: User): Promise<ContentInfoDto> {
     const content = await this.findPublicInfoById(id);
@@ -92,11 +136,6 @@ export class ContentService {
 
   async findById(id: Types.ObjectId): Promise<Content | null> {
     return this.contentModel.findOne({ _id: id, status: true }).lean().exec();
-  }
-
-  async create(content: Content): Promise<Content> {
-    const created = await this.contentModel.create(content);
-    return created.toObject();
   }
 
   async update(content: Partial<Content>): Promise<Content | null> {

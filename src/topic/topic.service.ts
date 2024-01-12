@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Type } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Topic } from './schemas/topic.schema';
@@ -73,6 +73,11 @@ export class TopicService {
       .findByIdAndUpdate(topic._id, { $set: { status: false } }, { new: true })
       .lean()
       .exec();
+  }
+
+  async exists(id: Types.ObjectId): Promise<boolean> {
+    const exists = await this.topicModel.exists(id);
+    return exists != null;
   }
 
   async findById(id: Types.ObjectId): Promise<Topic | null> {
