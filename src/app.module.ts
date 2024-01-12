@@ -17,6 +17,7 @@ import { MentorModule } from './mentor/mentor.module';
 import { TopicModule } from './topic/topic.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { ContentModule } from './content/content.module';
+import { BookmarkModule } from './bookmark/bookmark.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ContentModule } from './content/content.module';
     TopicModule,
     SubscriptionModule,
     ContentModule,
+    BookmarkModule,
   ],
   providers: [
     {
