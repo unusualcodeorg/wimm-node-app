@@ -34,7 +34,6 @@ temp
 *.save.*
 
 disk/*
-!disk/.gitkeep
 
 # Environment varibles
 *.env
