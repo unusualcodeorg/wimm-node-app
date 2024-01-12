@@ -2,11 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Mentor } from './schemas/mentor.schema';
-import { SubscriptionService } from '../subscription/subscription.service';
 import { User } from '../user/schemas/user.schema';
 import { CreateMentorDto } from './dto/create-mentor.dto';
 import { UpdateMentorDto } from './dto/update-mentor.dto';
-import { MentorSubscriptionDto } from './dto/mentor-subsciption.dto';
 import { MentorInfoDto } from './dto/mentor-info.dto';
 import { PaginationDto } from '../common/pagination.dto';
 
@@ -14,27 +12,9 @@ import { PaginationDto } from '../common/pagination.dto';
 export class MentorService {
   constructor(
     @InjectModel(Mentor.name) private readonly mentorModel: Model<Mentor>,
-    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   INFO_PARAMETERS = '-description -status';
-
-  async findMentorSubsciption(
-    mentorId: Types.ObjectId,
-    user: User,
-  ): Promise<MentorSubscriptionDto> {
-    const mentor = await this.findById(mentorId);
-    if (!mentor) throw new NotFoundException('Mentor not found');
-
-    const subscription =
-      await this.subscriptionService.findSubscriptionForUser(user);
-
-    const subscribedTopic = subscription?.topics.find((m) =>
-      mentor._id.equals(m._id),
-    );
-
-    return new MentorSubscriptionDto(mentor, subscribedTopic !== undefined);
-  }
 
   async create(admin: User, createMentorDto: CreateMentorDto): Promise<Mentor> {
     const created = await this.mentorModel.create({

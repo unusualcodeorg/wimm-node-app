@@ -1,9 +1,8 @@
-import { Controller, Get, Param, Request } from '@nestjs/common';
-import { MentorService } from './mentor.service';
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { ProtectedRequest } from '../core/http/request';
-import { MentorSubscriptionDto } from './dto/mentor-subsciption.dto';
 import { MongoIdTransformer } from '../common/mongoid.transformer';
+import { MentorService } from './mentor.service';
+import { MentorInfoDto } from './dto/mentor-info.dto';
 
 @Controller('mentor')
 export class MentorController {
@@ -12,8 +11,9 @@ export class MentorController {
   @Get('id/:id')
   async findOne(
     @Param('id', MongoIdTransformer) id: Types.ObjectId,
-    @Request() request: ProtectedRequest,
-  ): Promise<MentorSubscriptionDto> {
-    return this.mentorService.findMentorSubsciption(id, request.user);
+  ): Promise<MentorInfoDto> {
+    const mentor = await this.mentorService.findById(id);
+    if (!mentor) throw new NotFoundException('Mentor Not Found');
+    return new MentorInfoDto(mentor);
   }
 }

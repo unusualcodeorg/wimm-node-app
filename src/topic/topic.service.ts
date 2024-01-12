@@ -3,8 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Topic } from './schemas/topic.schema';
 import { User } from '../user/schemas/user.schema';
-import { TopicSubscriptionDto } from './dto/topic-subsciption.dto';
-import { SubscriptionService } from '../subscription/subscription.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
 import { PaginationDto } from '../common/pagination.dto';
@@ -13,27 +11,9 @@ import { PaginationDto } from '../common/pagination.dto';
 export class TopicService {
   constructor(
     @InjectModel(Topic.name) private readonly topicModel: Model<Topic>,
-    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   INFO_PARAMETERS = '-description -status';
-
-  async findTopicSubsciption(
-    topicId: Types.ObjectId,
-    user: User,
-  ): Promise<TopicSubscriptionDto> {
-    const topic = await this.findById(topicId);
-    if (!topic) throw new NotFoundException('Topic not found');
-
-    const subscription =
-      await this.subscriptionService.findSubscriptionForUser(user);
-
-    const subscribedTopic = subscription?.topics.find((m) =>
-      topic._id.equals(m._id),
-    );
-
-    return new TopicSubscriptionDto(topic, subscribedTopic !== undefined);
-  }
 
   async create(admin: User, createTopicDto: CreateTopicDto): Promise<Topic> {
     const created = await this.topicModel.create({

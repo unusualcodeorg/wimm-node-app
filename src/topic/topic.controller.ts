@@ -1,9 +1,8 @@
-import { Controller, Get, Param, Request } from '@nestjs/common';
-import { TopicService } from './topic.service';
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { Types } from 'mongoose';
-import { ProtectedRequest } from '../core/http/request';
-import { TopicSubscriptionDto } from './dto/topic-subsciption.dto';
 import { MongoIdTransformer } from '../common/mongoid.transformer';
+import { TopicService } from './topic.service';
+import { TopicInfoDto } from './dto/topic-info.dto';
 
 @Controller('topic')
 export class TopicController {
@@ -12,8 +11,9 @@ export class TopicController {
   @Get('id/:id')
   async findOne(
     @Param('id', MongoIdTransformer) id: Types.ObjectId,
-    @Request() request: ProtectedRequest,
-  ): Promise<TopicSubscriptionDto> {
-    return this.topicService.findTopicSubsciption(id, request.user);
+  ): Promise<TopicInfoDto> {
+    const topic = await this.topicService.findById(id);
+    if (!topic) throw new NotFoundException('Topic Not Found');
+    return new TopicInfoDto(topic);
   }
 }
