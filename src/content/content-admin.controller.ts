@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -51,5 +52,10 @@ export class ContentAdminController {
       id,
       updateContentDto,
     );
+  }
+
+  @Delete('id/:id')
+  async delete(@Param('id', MongoIdTransformer) id: Types.ObjectId) {
+    return await this.contentService.delete(id);
   }
 }

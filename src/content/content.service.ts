@@ -196,7 +196,9 @@ export class ContentService {
       .exec();
   }
 
-  async remove(content: Content): Promise<Content | null> {
+  async delete(contentId: Types.ObjectId): Promise<Content | null> {
+    const content = await this.findById(contentId);
+    if (!content) throw new NotFoundException('Content not found');
     return this.contentModel
       .findByIdAndUpdate(
         content._id,
