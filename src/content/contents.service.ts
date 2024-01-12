@@ -11,6 +11,8 @@ import { Subscription } from '../subscription/schemas/subscription.schema';
 import { PaginationDto } from '../common/pagination.dto';
 import { ContentService } from './content.service';
 import { ContentInfoDto } from './dto/content-info.dto';
+import { SubscriptionService } from '../subscription/subscription.service';
+import { PaginationRotatedDto } from './dto/pagination-rotated.dto';
 
 @Injectable()
 export class ContentsService {
@@ -19,13 +21,56 @@ export class ContentsService {
     private readonly contentService: ContentService,
     private readonly topicService: TopicService,
     private readonly mentorService: MentorService,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
-  // TODO
-  // async findRotatedContents(
-  //   user: User,
-  //   paginationRotatedDto: PaginationRotatedDto,
-  // ): Promise<ContentInfoDto[]> {}
+  async findRotatedContents(
+    user: User,
+    paginationRotatedDto: PaginationRotatedDto,
+  ): Promise<ContentInfoDto[]> {
+    const allContents: Content[] = [];
+
+    const subscription =
+      await this.subscriptionService.findSubscriptionForUser(user);
+
+    if (subscription) {
+      if (
+        paginationRotatedDto.empty == true ||
+        paginationRotatedDto.pageNumber == 1
+      ) {
+        const latestContents = await this.findSubscriptionContentsPaginated(
+          subscription,
+          paginationRotatedDto,
+        );
+        allContents.push(...latestContents);
+      }
+    }
+
+    const contents = await this.findContentsPaginated(paginationRotatedDto);
+
+    for (const content of contents) {
+      const found = allContents.find((c) => c._id.equals(content._id));
+      if (!found) allContents.push(content);
+    }
+
+    const likedContents = await this.findUserAndContentsLike(
+      user,
+      allContents.map((content) => content._id),
+    );
+
+    allContents.forEach((content) => this.contentService.statsBoostUp(content));
+
+    const contentInfodtos = allContents.map(
+      (content) => new ContentInfoDto(content),
+    );
+
+    for (const dto of contentInfodtos) {
+      const found = likedContents.find((liked) => liked._id.equals(dto._id));
+      dto.liked = found ? true : false;
+    }
+
+    return contentInfodtos;
+  }
 
   async findSimilarContents(
     user: User,
@@ -38,8 +83,7 @@ export class ContentsService {
     const contents = await this.searchSimilar(
       content,
       `${content.title} ${content.subtitle}`,
-      paginationDto.pageNumber,
-      paginationDto.pageItemCount,
+      paginationDto,
     );
 
     contents.forEach((content) => this.contentService.statsBoostUp(content));
@@ -72,8 +116,7 @@ export class ContentsService {
 
     const contents = await this.findMentorContentsPaginated(
       mentor,
-      paginationDto.pageNumber,
-      paginationDto.pageItemCount,
+      paginationDto,
     );
 
     contents.forEach((content) => this.contentService.statsBoostUp(content));
@@ -90,8 +133,7 @@ export class ContentsService {
 
     const contents = await this.findTopicContentsPaginated(
       topic,
-      paginationDto.pageNumber,
-      paginationDto.pageItemCount,
+      paginationDto,
     );
 
     contents.forEach((content) => this.contentService.statsBoostUp(content));
@@ -100,8 +142,7 @@ export class ContentsService {
   }
 
   async findContentsPaginated(
-    pageNumber: number,
-    limit: number,
+    paginationDto: PaginationDto,
   ): Promise<Content[]> {
     return this.contentModel
       .find({ status: true, private: { $ne: true } })
@@ -111,8 +152,8 @@ export class ContentsService {
         match: { status: true },
         select: '_id name profilePicUrl',
       })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
       .sort({ updatedAt: -1 })
       .lean()
       .exec();
@@ -120,8 +161,7 @@ export class ContentsService {
 
   async findMentorContentsPaginated(
     mentor: Mentor,
-    pageNumber: number,
-    limit: number,
+    paginationDto: PaginationDto,
   ): Promise<Content[]> {
     return this.contentModel
       .find({
@@ -135,8 +175,8 @@ export class ContentsService {
         match: { status: true },
         select: '_id',
       })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
       .sort({ score: -1, updatedAt: -1 })
       .lean()
       .exec();
@@ -163,8 +203,7 @@ export class ContentsService {
 
   async findTopicContentsPaginated(
     topic: Topic,
-    pageNumber: number,
-    limit: number,
+    paginationDto: PaginationDto,
   ): Promise<Content[]> {
     return this.contentModel
       .find({
@@ -178,8 +217,8 @@ export class ContentsService {
         match: { status: true },
         select: '_id',
       })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
       .sort({ score: -1, updatedAt: -1 })
       .lean()
       .exec();
@@ -207,8 +246,7 @@ export class ContentsService {
   async searchSimilar(
     content: Content,
     query: string,
-    pageNumber: number,
-    limit: number,
+    paginationDto: PaginationDto,
   ): Promise<Content[]> {
     return this.contentModel
       .find(
@@ -230,16 +268,15 @@ export class ContentsService {
         select: '_id name profilePicUrl',
       })
       .sort({ similarity: { $meta: 'textScore' } })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
       .lean()
       .exec();
   }
 
   async findSubscriptionContentsPaginated(
     subscription: Subscription,
-    pageNumber: number,
-    limit: number,
+    paginationDto: PaginationDto,
   ): Promise<Content[]> {
     return this.contentModel
       .find()
@@ -260,8 +297,8 @@ export class ContentsService {
         match: { status: true },
         select: '_id name profilePicUrl',
       })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
       .sort({ updatedAt: -1 })
       .lean()
       .exec();
@@ -269,8 +306,7 @@ export class ContentsService {
 
   async findUserContentsPaginated(
     user: User,
-    pageNumber: number,
-    limit: number,
+    paginationDto: PaginationDto,
   ): Promise<Content[]> {
     return this.contentModel
       .find({ createdBy: user._id, status: true })
@@ -280,8 +316,8 @@ export class ContentsService {
         match: { status: true },
         select: '_id',
       })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
       .sort({ updatedAt: -1 })
       .lean()
       .exec();
@@ -290,8 +326,7 @@ export class ContentsService {
   async findUserBoxContentPaginated(
     user: User,
     bookmarkedContentIds: Types.ObjectId[],
-    pageNumber: number,
-    limit: number,
+    paginationDto: PaginationDto,
   ): Promise<Content[]> {
     return this.contentModel
       .find()
@@ -310,8 +345,8 @@ export class ContentsService {
         match: { status: true },
         select: '_id',
       })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
+      .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
+      .limit(paginationDto.pageItemCount)
       .sort({ createdAt: -1 })
       .lean()
       .exec();

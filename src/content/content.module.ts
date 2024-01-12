@@ -9,12 +9,14 @@ import { MentorModule } from '../mentor/mentor.module';
 import { ContentPrivateController } from './content-private.controller';
 import { ContentsController } from './contents.controller';
 import { ContentsService } from './contents.service';
+import { SubscriptionModule } from '../subscription/subscription.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Content.name, schema: ContentSchema }]),
     TopicModule,
     MentorModule,
+    SubscriptionModule,
   ],
   controllers: [
     ContentController,

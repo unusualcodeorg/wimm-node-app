@@ -1,18 +1,10 @@
+import { IsBoolean, IsOptional } from 'class-validator';
+import { PaginationDto } from '../../common/pagination.dto';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsOptional, Min } from 'class-validator';
 
-export class PaginationRotatedDto {
+export class PaginationRotatedDto extends PaginationDto {
   @IsOptional()
   @IsBoolean()
-  readonly empty: boolean;
-
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  readonly pageNumber: number;
-
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  readonly pageItemCount: number;
+  @Type(() => Boolean)
+  readonly empty: boolean = false;
 }

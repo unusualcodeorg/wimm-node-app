@@ -5,6 +5,7 @@ import { MongoIdTransformer } from '../common/mongoid.transformer';
 import { Types } from 'mongoose';
 import { ContentInfoDto } from './dto/content-info.dto';
 import { PaginationDto } from '../common/pagination.dto';
+import { PaginationRotatedDto } from './dto/pagination-rotated.dto';
 
 @Controller('contents')
 export class ContentsController {
@@ -40,5 +41,16 @@ export class ContentsController {
     @Query() paginationDto: PaginationDto,
   ): Promise<ContentInfoDto[]> {
     return await this.contentsService.findTopicContents(topicId, paginationDto);
+  }
+
+  @Get('rotated')
+  async findRotatedContents(
+    @Query() paginationRotatedDto: PaginationRotatedDto,
+    @Request() request: ProtectedRequest,
+  ): Promise<ContentInfoDto[]> {
+    return await this.contentsService.findRotatedContents(
+      request.user,
+      paginationRotatedDto,
+    );
   }
 }
