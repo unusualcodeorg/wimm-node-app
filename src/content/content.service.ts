@@ -83,6 +83,20 @@ export class ContentService {
     });
   }
 
+  async publishContent(
+    admin: User,
+    id: Types.ObjectId,
+  ): Promise<Content | null> {
+    const content = await this.findById(id);
+    if (!content) throw new NotFoundException('Content Not Found');
+
+    return await this.update({
+      _id: content._id,
+      general: true,
+      private: false,
+    });
+  }
+
   private async validateTopicsMentors(
     topics: Types.ObjectId[] | undefined,
     mentors: Types.ObjectId[] | undefined,

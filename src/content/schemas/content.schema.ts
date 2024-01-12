@@ -65,8 +65,8 @@ export class Content {
   @Prop({ default: 0, min: 0 })
   shares: number;
 
-  @Prop({ default: false, select: false })
-  general?: boolean;
+  @Prop({ default: false })
+  general: boolean;
 
   @Prop({ default: 0.01, max: 1, min: 0 })
   score: number;

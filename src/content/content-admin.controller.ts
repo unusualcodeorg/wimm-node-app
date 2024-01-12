@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  InternalServerErrorException,
   NotFoundException,
   Param,
   Post,
@@ -18,6 +19,7 @@ import { Content } from './schemas/content.schema';
 import { CreateContentDto } from './dto/create-content.dto';
 import { ProtectedRequest } from '../core/http/request';
 import { UpdateContentDto } from './dto/update-content.dto';
+import { MongoIdDto } from '../common/mongoid.dto';
 
 @Roles([RoleCode.ADMIN])
 @Controller('content/admin')
@@ -38,7 +40,12 @@ export class ContentAdminController {
     @Body() createContentDto: CreateContentDto,
     @Request() request: ProtectedRequest,
   ): Promise<Content> {
-    return this.contentService.createContent(createContentDto, request.user);
+    const content = this.contentService.createContent(
+      createContentDto,
+      request.user,
+    );
+    if (!content) throw new InternalServerErrorException();
+    return content;
   }
 
   @Put('id/:id')
@@ -46,16 +53,33 @@ export class ContentAdminController {
     @Param('id', MongoIdTransformer) id: Types.ObjectId,
     @Request() request: ProtectedRequest,
     @Body() updateContentDto: UpdateContentDto,
-  ) {
-    return await this.contentService.updateContent(
+  ): Promise<Content> {
+    const content = await this.contentService.updateContent(
       request.user,
       id,
       updateContentDto,
     );
+    if (!content) throw new InternalServerErrorException();
+    return content;
   }
 
   @Delete('id/:id')
   async delete(@Param('id', MongoIdTransformer) id: Types.ObjectId) {
-    return await this.contentService.delete(id);
+    const content = await this.contentService.delete(id);
+    if (!content) throw new InternalServerErrorException();
+    return content;
+  }
+
+  @Put('publish/general')
+  async publish(
+    @Body() mongoIdDto: MongoIdDto,
+    @Request() request: ProtectedRequest,
+  ): Promise<string> {
+    const content = await this.contentService.publishContent(
+      request.user,
+      mongoIdDto.id,
+    );
+    if (!content) throw new InternalServerErrorException('Not able to publish');
+    return 'Content published successfully';
   }
 }
