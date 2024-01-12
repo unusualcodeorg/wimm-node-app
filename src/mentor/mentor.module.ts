@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MentorController } from './mentor.controller';
 import { MentorService } from './mentor.service';
 import { SubscriptionModule } from '../subscription/subscription.module';
-import { MentorAdminController } from './mentor.admin.controller';
+import { MentorAdminController } from './mentor-admin.controller';
 import { MentorsController } from './mentors.controller';
 
 @Module({

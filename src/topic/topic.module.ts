@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TopicController } from './topic.controller';
 import { TopicService } from './topic.service';
 import { SubscriptionModule } from '../subscription/subscription.module';
-import { TopicAdminController } from './topic.admin.controller';
+import { TopicAdminController } from './topic-admin.controller';
 import { TopicsController } from './topics.controller';
 
 @Module({
