@@ -7,7 +7,6 @@ import { TopicSubscriptionDto } from './dto/topic-subsciption.dto';
 import { SubscriptionService } from '../subscription/subscription.service';
 import { CreateTopicDto } from './dto/create-topic.dto';
 import { UpdateTopicDto } from './dto/update-topic.dto';
-import { TopicInfoDto } from './dto/topic-info.dto';
 import { PaginationDto } from '../common/pagination.dto';
 
 @Injectable()
@@ -92,10 +91,8 @@ export class TopicService {
       .exec();
   }
 
-  async findTopicsPaginated(
-    paginationDto: PaginationDto,
-  ): Promise<TopicInfoDto[]> {
-    const topics = await this.topicModel
+  async findTopicsPaginated(paginationDto: PaginationDto): Promise<Topic[]> {
+    return this.topicModel
       .find({ status: true })
       .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
       .limit(paginationDto.pageItemCount)
@@ -103,11 +100,10 @@ export class TopicService {
       .sort({ updatedAt: -1 })
       .lean()
       .exec();
-    return topics.map((topic) => new TopicInfoDto(topic));
   }
 
-  async search(query: string, limit: number): Promise<TopicInfoDto[]> {
-    const topics = await this.topicModel
+  async search(query: string, limit: number): Promise<Topic[]> {
+    return this.topicModel
       .find({
         $text: { $search: query, $caseSensitive: false },
         status: true,
@@ -116,11 +112,10 @@ export class TopicService {
       .limit(limit)
       .lean()
       .exec();
-    return topics.map((topic) => new TopicInfoDto(topic));
   }
 
-  async searchLike(query: string, limit: number): Promise<TopicInfoDto[]> {
-    const topics = await this.topicModel
+  async searchLike(query: string, limit: number): Promise<Topic[]> {
+    return this.topicModel
       .find()
       .and([
         { status: true },
@@ -135,26 +130,22 @@ export class TopicService {
       .limit(limit)
       .lean()
       .exec();
-
-    return topics.map((topic) => new TopicInfoDto(topic));
   }
 
-  async findRecommendedTopics(limit: number): Promise<TopicInfoDto[]> {
-    const topics = await this.topicModel
+  async findRecommendedTopics(limit: number): Promise<Topic[]> {
+    return this.topicModel
       .find({ status: true })
       .limit(limit)
       .select(this.INFO_PARAMETERS)
       .sort({ score: -1 })
       .lean()
       .exec();
-
-    return topics.map((topic) => new TopicInfoDto(topic));
   }
 
   async findRecommendedTopicsPaginated(
     paginationDto: PaginationDto,
-  ): Promise<TopicInfoDto[]> {
-    const topics = await this.topicModel
+  ): Promise<Topic[]> {
+    return this.topicModel
       .find({ status: true })
       .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
       .limit(paginationDto.pageItemCount)
@@ -162,6 +153,5 @@ export class TopicService {
       .sort({ score: -1 })
       .lean()
       .exec();
-    return topics.map((topic) => new TopicInfoDto(topic));
   }
 }

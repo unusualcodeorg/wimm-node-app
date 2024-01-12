@@ -11,13 +11,17 @@ export class MentorsController {
   async findLatest(
     @Query() paginationDto: PaginationDto,
   ): Promise<MentorInfoDto[]> {
-    return this.mentorService.findMentorsPaginated(paginationDto);
+    const mentors =
+      await this.mentorService.findMentorsPaginated(paginationDto);
+    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 
   @Get('recommendation')
   async findRecomended(
     @Query() paginationDto: PaginationDto,
   ): Promise<MentorInfoDto[]> {
-    return this.mentorService.findRecommendedMentorsPaginated(paginationDto);
+    const mentors =
+      await this.mentorService.findRecommendedMentorsPaginated(paginationDto);
+    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 }

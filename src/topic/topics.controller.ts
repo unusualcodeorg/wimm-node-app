@@ -11,13 +11,16 @@ export class TopicsController {
   async findLatest(
     @Query() paginationDto: PaginationDto,
   ): Promise<TopicInfoDto[]> {
-    return this.topicService.findTopicsPaginated(paginationDto);
+    const topics = await this.topicService.findTopicsPaginated(paginationDto);
+    return topics.map((topic) => new TopicInfoDto(topic));
   }
 
   @Get('recommendation')
   async findRecomended(
     @Query() paginationDto: PaginationDto,
   ): Promise<TopicInfoDto[]> {
-    return this.topicService.findRecommendedTopicsPaginated(paginationDto);
+    const topics =
+      await this.topicService.findRecommendedTopicsPaginated(paginationDto);
+    return topics.map((topic) => new TopicInfoDto(topic));
   }
 }

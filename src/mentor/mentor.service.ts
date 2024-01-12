@@ -92,10 +92,8 @@ export class MentorService {
       .exec();
   }
 
-  async findMentorsPaginated(
-    paginationDto: PaginationDto,
-  ): Promise<MentorInfoDto[]> {
-    const mentors = await this.mentorModel
+  async findMentorsPaginated(paginationDto: PaginationDto): Promise<Mentor[]> {
+    return this.mentorModel
       .find({ status: true })
       .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
       .limit(paginationDto.pageItemCount)
@@ -103,11 +101,10 @@ export class MentorService {
       .sort({ updatedAt: -1 })
       .lean()
       .exec();
-    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 
   async search(query: string, limit: number): Promise<MentorInfoDto[]> {
-    const mentors = await this.mentorModel
+    return this.mentorModel
       .find({
         $text: { $search: query, $caseSensitive: false },
         status: true,
@@ -116,11 +113,10 @@ export class MentorService {
       .limit(limit)
       .lean()
       .exec();
-    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 
   async searchLike(query: string, limit: number): Promise<MentorInfoDto[]> {
-    const mentors = await this.mentorModel
+    return this.mentorModel
       .find()
       .and([
         { status: true },
@@ -136,24 +132,22 @@ export class MentorService {
       .limit(limit)
       .lean()
       .exec();
-    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 
   async findRecommendedMentors(limit: number): Promise<MentorInfoDto[]> {
-    const mentors = await this.mentorModel
+    return this.mentorModel
       .find({ status: true })
       .limit(limit)
       .select(this.INFO_PARAMETERS)
       .sort({ score: -1 })
       .lean()
       .exec();
-    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 
   async findRecommendedMentorsPaginated(
     paginationDto: PaginationDto,
-  ): Promise<MentorInfoDto[]> {
-    const mentors = await this.mentorModel
+  ): Promise<Mentor[]> {
+    return this.mentorModel
       .find({ status: true })
       .skip(paginationDto.pageItemCount * (paginationDto.pageNumber - 1))
       .limit(paginationDto.pageItemCount)
@@ -161,6 +155,5 @@ export class MentorService {
       .sort({ score: -1 })
       .lean()
       .exec();
-    return mentors.map((mentor) => new MentorInfoDto(mentor));
   }
 }
