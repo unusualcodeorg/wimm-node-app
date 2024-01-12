@@ -5,6 +5,7 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { TokenExpiredError } from '@nestjs/jwt';
 import { Request, Response } from 'express';
@@ -12,10 +13,14 @@ import { StatusCode } from '../http/response';
 import { isArray } from 'class-validator';
 import { ConfigService } from '@nestjs/config';
 import { ServerConfig, ServerConfigName } from '../../config/server.config';
+import { WinstonLogger } from '../../setup/winston.logger';
 
 @Catch()
 export class ExpectionHandler implements ExceptionFilter {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly logger: WinstonLogger,
+  ) {}
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -40,6 +45,9 @@ export class ExpectionHandler implements ExceptionFilter {
           errors = body.message;
         }
       }
+      if (exception instanceof InternalServerErrorException) {
+        this.logger.error(exception.message, exception.stack);
+      }
     } else if (exception instanceof TokenExpiredError) {
       status = HttpStatus.UNAUTHORIZED;
       statusCode = StatusCode.INVALID_ACCESS_TOKEN;
@@ -49,6 +57,7 @@ export class ExpectionHandler implements ExceptionFilter {
       const serverConfig =
         this.configService.getOrThrow<ServerConfig>(ServerConfigName);
       if (serverConfig.nodeEnv === 'development') message = exception.message;
+      this.logger.error(exception.message, exception.stack);
     }
 
     response.status(status).json({

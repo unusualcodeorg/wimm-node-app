@@ -8,6 +8,7 @@ import { ApiKeyGuard } from './guards/apikey.guard';
 import { ExpectionHandler } from './interceptors/exception.handler';
 import { ResponseValidation } from './interceptors/response.validations';
 import { ConfigModule } from '@nestjs/config';
+import { WinstonLogger } from '../setup/winston.logger';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ConfigModule } from '@nestjs/config';
       }),
     },
     CoreService,
+    WinstonLogger,
   ],
 })
 export class CoreModule {}

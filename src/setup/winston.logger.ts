@@ -14,7 +14,7 @@ export class WinstonLogger implements LoggerService {
       this.configService.getOrThrow<ServerConfig>(ServerConfigName);
     const logsPath = resolve(__dirname, '../..', serverConfig.logDirectory);
 
-    const logLevel = serverConfig.nodeEnv === 'development' ? 'debug' : 'warn';
+    const logLevel = serverConfig.nodeEnv === 'development' ? 'warn' : 'error';
 
     const dailyRotateFile = new DailyRotateFile({
       level: logLevel,
@@ -30,9 +30,9 @@ export class WinstonLogger implements LoggerService {
     this.logger = winston.createLogger({
       level: logLevel,
       format: winston.format.combine(
-        winston.format.errors({ stack: true }),
         winston.format.timestamp(),
-        winston.format.json(),
+        winston.format.errors({ stack: true }),
+        winston.format.prettyPrint(),
       ),
       transports: [
         new winston.transports.Console({
@@ -52,8 +52,12 @@ export class WinstonLogger implements LoggerService {
     this.logger.info(message);
   }
 
-  error(message: string, trace: string) {
-    this.logger.error(message, trace);
+  error(message: string, trace?: string) {
+    if (trace) {
+      this.logger.error(`${message}\n${trace}`, trace);
+    } else {
+      this.logger.error(message);
+    }
   }
 
   warn(message: string) {
