@@ -10,7 +10,6 @@ import { Category, Content } from './schemas/content.schema';
 import { User } from '../user/schemas/user.schema';
 import { Mentor } from '../mentor/schemas/mentor.schema';
 import { Topic } from '../topic/schemas/topic.schema';
-import { Subscription } from '../subscription/schemas/subscription.schema';
 import { ContentInfoDto } from './dto/content-info.dto';
 import { CreateContentDto } from './dto/create-content.dto';
 import { TopicService } from '../topic/topic.service';
@@ -305,224 +304,6 @@ export class ContentService {
       .exec();
   }
 
-  async findContentsPaginated(
-    pageNumber: number,
-    limit: number,
-  ): Promise<Content[]> {
-    return this.contentModel
-      .find({ status: true, private: { $ne: true } })
-      .select('-status -private')
-      .populate({
-        path: 'createdBy',
-        match: { status: true },
-        select: '_id name profilePicUrl',
-      })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
-      .sort({ updatedAt: -1 })
-      .lean()
-      .exec();
-  }
-
-  async findMentorContentsPaginated(
-    mentor: Mentor,
-    pageNumber: number,
-    limit: number,
-  ): Promise<Content[]> {
-    return this.contentModel
-      .find({
-        mentors: mentor._id,
-        status: true,
-        private: { $ne: true },
-      })
-      .select('-status -private')
-      .populate({
-        path: 'createdBy',
-        match: { status: true },
-        select: '_id',
-      })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
-      .sort({ score: -1, updatedAt: -1 })
-      .lean()
-      .exec();
-  }
-
-  async findTopicContentsPaginated(
-    topic: Topic,
-    pageNumber: number,
-    limit: number,
-  ): Promise<Content[]> {
-    return this.contentModel
-      .find({
-        topics: topic._id,
-        status: true,
-        private: { $ne: true },
-      })
-      .select('-status -private')
-      .populate({
-        path: 'createdBy',
-        match: { status: true },
-        select: '_id',
-      })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
-      .sort({ score: -1, updatedAt: -1 })
-      .lean()
-      .exec();
-  }
-
-  async search(query: string, limit: number): Promise<Content[]> {
-    return this.contentModel
-      .find({
-        $text: { $search: query, $caseSensitive: false },
-        status: true,
-        private: { $ne: true },
-      })
-      .select('-status -private')
-      .populate({
-        path: 'createdBy',
-        match: { status: true },
-        select: '_id',
-      })
-      .limit(limit)
-      .sort({ score: -1, updatedAt: -1 })
-      .lean()
-      .exec();
-  }
-
-  async searchLike(query: string, limit: number): Promise<Content[]> {
-    return this.contentModel
-      .find({
-        title: { $regex: `.*${query}.*`, $options: 'i' },
-        status: true,
-        private: { $ne: true },
-      })
-      .select('-status -private')
-      .populate({
-        path: 'createdBy',
-        match: { status: true },
-        select: '_id',
-      })
-      .limit(limit)
-      .sort({ score: -1, updatedAt: -1 })
-      .lean()
-      .exec();
-  }
-
-  async searchSimilar(
-    content: Content,
-    query: string,
-    pageNumber: number,
-    limit: number,
-  ): Promise<Content[]> {
-    return this.contentModel
-      .find(
-        {
-          $text: { $search: query, $caseSensitive: false },
-          status: true,
-          private: { $ne: true },
-          category: content.category,
-          _id: { $ne: content._id },
-        },
-        {
-          similarity: { $meta: 'textScore' },
-        },
-      )
-      .select('-status -private')
-      .populate({
-        path: 'createdBy',
-        match: { status: true },
-        select: '_id name profilePicUrl',
-      })
-      .sort({ similarity: { $meta: 'textScore' } })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
-      .lean()
-      .exec();
-  }
-
-  async findSubscriptionContentsPaginated(
-    subscription: Subscription,
-    pageNumber: number,
-    limit: number,
-  ): Promise<Content[]> {
-    return this.contentModel
-      .find()
-      .and([
-        { status: true },
-        { private: { $ne: true } },
-        {
-          $or: [
-            { mentors: { $in: subscription.mentors.flatMap((m) => m._id) } },
-            { topics: { $in: subscription.topics.flatMap((t) => t._id) } },
-            { general: { $eq: true }, submit: true },
-          ],
-        },
-      ])
-      .select('-status -private')
-      .populate({
-        path: 'createdBy',
-        match: { status: true },
-        select: '_id name profilePicUrl',
-      })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
-      .sort({ updatedAt: -1 })
-      .lean()
-      .exec();
-  }
-
-  async findUserContentsPaginated(
-    user: User,
-    pageNumber: number,
-    limit: number,
-  ): Promise<Content[]> {
-    return this.contentModel
-      .find({ createdBy: user._id, status: true })
-      .select('-status -private')
-      .populate({
-        path: 'createdBy',
-        match: { status: true },
-        select: '_id',
-      })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
-      .sort({ updatedAt: -1 })
-      .lean()
-      .exec();
-  }
-
-  async findUserBoxContentPaginated(
-    user: User,
-    bookmarkedContentIds: Types.ObjectId[],
-    pageNumber: number,
-    limit: number,
-  ): Promise<Content[]> {
-    return this.contentModel
-      .find()
-      .and([
-        { status: true },
-        {
-          $or: [
-            { createdBy: user._id },
-            { _id: { $in: bookmarkedContentIds } },
-          ],
-        },
-      ])
-      .select('-status +submit')
-      .populate({
-        path: 'createdBy',
-        match: { status: true },
-        select: '_id',
-      })
-      .skip(limit * (pageNumber - 1))
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .lean()
-      .exec();
-  }
-
   async findPrivateInfoById(id: Types.ObjectId): Promise<Content | null> {
     return this.contentModel
       .findOne({ _id: id, status: true })
@@ -562,21 +343,6 @@ export class ContentService {
         { $pull: { likedBy: user._id }, likes: likes },
         { new: true },
       )
-      .lean()
-      .exec();
-  }
-
-  async findUserAndContentsLike(
-    user: User,
-    contentIds: Types.ObjectId[],
-  ): Promise<Content[]> {
-    return this.contentModel
-      .find({
-        status: true,
-        likedBy: user._id,
-        _id: { $in: contentIds },
-      })
-      .select('-status -private')
       .lean()
       .exec();
   }
@@ -622,12 +388,15 @@ export class ContentService {
     return { topics: topicIds, mentors: mentorIds };
   }
 
-  private statsBoostUp(content: Content) {
-    if (content) {
-      if (content.likes) content.likes = content.likes + 9 * content.likes;
-      if (content.views) content.views = content.views + 17 * content.views;
-      if (content.shares) content.shares = content.shares + 7 * content.shares;
-    }
+  statsBoostUp(content: Content) {
+    if (!content.likes) content.likes = 1;
+    if (!content.views) content.views = 1;
+    if (!content.shares) content.shares = 1;
+
+    content.likes = content.likes + 9 * content.likes;
+    content.views = content.views + 17 * content.views;
+    content.shares = content.shares + 7 * content.shares;
+
     return content;
   }
 }

@@ -7,6 +7,8 @@ import { ContentAdminController } from './content-admin.controller';
 import { TopicModule } from '../topic/topic.module';
 import { MentorModule } from '../mentor/mentor.module';
 import { ContentPrivateController } from './content-private.controller';
+import { ContentsController } from './contents.controller';
+import { ContentsService } from './contents.service';
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { ContentPrivateController } from './content-private.controller';
     ContentController,
     ContentAdminController,
     ContentPrivateController,
+    ContentsController,
   ],
-  providers: [ContentService],
-  exports: [ContentService],
+  providers: [ContentService, ContentsService],
+  exports: [ContentService, ContentsService],
 })
 export class ContentModule {}

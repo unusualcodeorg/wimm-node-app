@@ -54,6 +54,7 @@ export class ContentInfoDto {
   @Max(1)
   score: number;
 
+  @IsOptional()
   @IsBoolean()
   liked: boolean;
 
@@ -64,7 +65,7 @@ export class ContentInfoDto {
   @ValidateNested()
   createdBy: UserInfoDto;
 
-  constructor(content: Content, liked: boolean = false) {
+  constructor(content: Content, liked: boolean | undefined = undefined) {
     const props = copy(content, [
       '_id',
       'category',
@@ -81,7 +82,7 @@ export class ContentInfoDto {
       'score',
     ]);
     Object.assign(this, props);
-    this.liked = liked;
     this.createdBy = new UserInfoDto(content.createdBy);
+    if (liked !== undefined) this.liked = liked;
   }
 }
