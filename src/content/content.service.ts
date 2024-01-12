@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -54,30 +55,6 @@ export class ContentService {
     return created.toObject();
   }
 
-  async createPrivateContent(
-    createPrivateContentDto: CreatePrivateContentDto,
-    user: User,
-  ): Promise<ContentInfoDto> {
-    if (
-      (createPrivateContentDto.extra.includes('https://youtu.be') ||
-        createPrivateContentDto.extra.includes(
-          'https://www.youtube.com/watch',
-        )) &&
-      createPrivateContentDto.category != Category.YOUTUBE
-    ) {
-      throw new BadRequestException('Content category must be YOUTUBE');
-    }
-
-    const created = await this.contentModel.create({
-      ...createPrivateContentDto,
-      private: true,
-      createdBy: user,
-      updatedBy: user,
-    });
-
-    return new ContentInfoDto({ ...created.toObject(), createdBy: user });
-  }
-
   async updateContent(
     admin: User,
     id: Types.ObjectId,
@@ -112,6 +89,68 @@ export class ContentService {
     });
   }
 
+  async createPrivateContent(
+    createPrivateContentDto: CreatePrivateContentDto,
+    user: User,
+  ): Promise<ContentInfoDto> {
+    if (
+      (createPrivateContentDto.extra.includes('https://youtu.be') ||
+        createPrivateContentDto.extra.includes(
+          'https://www.youtube.com/watch',
+        )) &&
+      createPrivateContentDto.category != Category.YOUTUBE
+    ) {
+      throw new BadRequestException('Content category must be YOUTUBE');
+    }
+
+    const created = await this.contentModel.create({
+      ...createPrivateContentDto,
+      private: true,
+      createdBy: user,
+      updatedBy: user,
+    });
+
+    return new ContentInfoDto({ ...created.toObject(), createdBy: user });
+  }
+
+  async submitPrivateContent(
+    user: User,
+    id: Types.ObjectId,
+  ): Promise<Content | null> {
+    return this.updatePrivateContent(user, id, { submit: true });
+  }
+
+  async unsubmitPrivateContent(
+    user: User,
+    id: Types.ObjectId,
+  ): Promise<Content | null> {
+    return this.updatePrivateContent(user, id, { submit: false });
+  }
+
+  async deletePrivateContent(
+    user: User,
+    id: Types.ObjectId,
+  ): Promise<Content | null> {
+    return this.updatePrivateContent(user, id, { status: false });
+  }
+
+  private async updatePrivateContent(
+    user: User,
+    id: Types.ObjectId,
+    updater: Partial<Content>,
+  ): Promise<Content | null> {
+    const content = await this.findPrivateInfoById(id);
+    if (!content) throw new NotFoundException('Content Not Found');
+
+    if (!user._id.equals(content.createdBy._id))
+      throw new ForbiddenException('Permission denied');
+
+    return await this.update({
+      _id: content._id,
+      ...updater,
+    });
+  }
+
   async publishContent(
     admin: User,
     id: Types.ObjectId,
@@ -123,6 +162,7 @@ export class ContentService {
       _id: content._id,
       general: true,
       private: false,
+      updatedBy: admin,
     });
   }
 
@@ -228,7 +268,7 @@ export class ContentService {
 
   async findByIdPopulated(id: Types.ObjectId): Promise<Content | null> {
     return this.contentModel
-      .findById(id)
+      .findOne({ _id: id, status: true })
       .populate({
         path: 'createdBy',
         match: { status: true },
@@ -485,7 +525,7 @@ export class ContentService {
 
   async findPrivateInfoById(id: Types.ObjectId): Promise<Content | null> {
     return this.contentModel
-      .findById(id)
+      .findOne({ _id: id, status: true })
       .select('+submit')
       .populate({
         path: 'createdBy',
