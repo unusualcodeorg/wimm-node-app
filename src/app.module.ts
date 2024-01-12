@@ -18,6 +18,7 @@ import { TopicModule } from './topic/topic.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { ContentModule } from './content/content.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { BookmarkModule } from './bookmark/bookmark.module';
     SubscriptionModule,
     ContentModule,
     BookmarkModule,
+    SearchModule,
   ],
   providers: [
     {

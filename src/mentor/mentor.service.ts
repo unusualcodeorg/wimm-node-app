@@ -5,7 +5,6 @@ import { Mentor } from './schemas/mentor.schema';
 import { User } from '../user/schemas/user.schema';
 import { CreateMentorDto } from './dto/create-mentor.dto';
 import { UpdateMentorDto } from './dto/update-mentor.dto';
-import { MentorInfoDto } from './dto/mentor-info.dto';
 import { PaginationDto } from '../common/pagination.dto';
 
 @Injectable()
@@ -83,7 +82,7 @@ export class MentorService {
       .exec();
   }
 
-  async search(query: string, limit: number): Promise<MentorInfoDto[]> {
+  async search(query: string, limit: number): Promise<Mentor[]> {
     return this.mentorModel
       .find({
         $text: { $search: query, $caseSensitive: false },
@@ -95,7 +94,7 @@ export class MentorService {
       .exec();
   }
 
-  async searchLike(query: string, limit: number): Promise<MentorInfoDto[]> {
+  async searchLike(query: string, limit: number): Promise<Mentor[]> {
     return this.mentorModel
       .find()
       .and([
@@ -114,7 +113,7 @@ export class MentorService {
       .exec();
   }
 
-  async findRecommendedMentors(limit: number): Promise<MentorInfoDto[]> {
+  async findRecommendedMentors(limit: number): Promise<Mentor[]> {
     return this.mentorModel
       .find({ status: true })
       .limit(limit)
