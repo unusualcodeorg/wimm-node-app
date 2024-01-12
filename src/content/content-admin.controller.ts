@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   Request,
 } from '@nestjs/common';
 import { ContentService } from './content.service';
@@ -15,6 +16,7 @@ import { Types } from 'mongoose';
 import { Content } from './schemas/content.schema';
 import { CreateContentDto } from './dto/create-content.dto';
 import { ProtectedRequest } from '../core/http/request';
+import { UpdateContentDto } from './dto/update-content.dto';
 
 @Roles([RoleCode.ADMIN])
 @Controller('content/admin')
@@ -35,6 +37,19 @@ export class ContentAdminController {
     @Body() createContentDto: CreateContentDto,
     @Request() request: ProtectedRequest,
   ): Promise<Content> {
-    return this.contentService.create(createContentDto, request.user);
+    return this.contentService.createContent(createContentDto, request.user);
+  }
+
+  @Put('id/:id')
+  async update(
+    @Param('id', MongoIdTransformer) id: Types.ObjectId,
+    @Request() request: ProtectedRequest,
+    @Body() updateContentDto: UpdateContentDto,
+  ) {
+    return await this.contentService.updateContent(
+      request.user,
+      id,
+      updateContentDto,
+    );
   }
 }

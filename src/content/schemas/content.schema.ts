@@ -40,16 +40,12 @@ export class Content {
   extra: string;
 
   @Prop({
-    type: [
-      { type: mongoose.Schema.Types.ObjectId, ref: Topic.name, select: false },
-    ],
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Topic.name }],
   })
   topics: Topic[];
 
   @Prop({
-    type: [
-      { type: mongoose.Schema.Types.ObjectId, ref: Mentor.name, select: false },
-    ],
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Mentor.name }],
   })
   mentors: Mentor[];
 

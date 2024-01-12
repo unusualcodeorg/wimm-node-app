@@ -10,6 +10,7 @@ import { ContentInfoDto } from './dto/content-info.dto';
 import { CreateContentDto } from './dto/create-content.dto';
 import { TopicService } from '../topic/topic.service';
 import { MentorService } from '../mentor/mentor.service';
+import { UpdateContentDto } from './dto/update-content.dto';
 
 @Injectable()
 export class ContentService {
@@ -19,43 +20,93 @@ export class ContentService {
     private readonly mentorService: MentorService,
   ) {}
 
-  async create(
+  async createContent(
     createContentDto: CreateContentDto,
     admin: User,
   ): Promise<Content> {
+    const topicsAndMentors = await this.validateTopicsMentors(
+      createContentDto.topics,
+      createContentDto.mentors,
+    );
+
+    if (
+      topicsAndMentors.topics.length == 0 &&
+      topicsAndMentors.mentors.length == 0
+    ) {
+      throw new NotFoundException(
+        'Content must have atleast a mentor or a topic',
+      );
+    }
+
+    const created = await this.contentModel.create({
+      ...createContentDto,
+      topics: topicsAndMentors.topics,
+      mentors: topicsAndMentors.mentors,
+      createdBy: admin,
+      updatedBy: admin,
+    });
+
+    return created.toObject();
+  }
+
+  async updateContent(
+    admin: User,
+    id: Types.ObjectId,
+    updateContentDto: UpdateContentDto,
+  ): Promise<Content | null> {
+    const content = await this.findById(id);
+    if (!content) throw new NotFoundException('Content Not Found');
+
+    const topicsAndMentors = await this.validateTopicsMentors(
+      updateContentDto.topics,
+      updateContentDto.mentors,
+    );
+
+    if (topicsAndMentors.topics.length > 0) {
+      content.topics = topicsAndMentors.topics.map(
+        (id) => ({ _id: id }) as Topic,
+      );
+    }
+
+    if (topicsAndMentors.mentors.length > 0) {
+      content.mentors = topicsAndMentors.mentors.map(
+        (id) => ({ _id: id }) as Mentor,
+      );
+    }
+
+    return this.update({
+      _id: content._id,
+      ...updateContentDto,
+      topics: content.topics,
+      mentors: content.mentors,
+      updatedBy: admin,
+    });
+  }
+
+  private async validateTopicsMentors(
+    topics: Types.ObjectId[] | undefined,
+    mentors: Types.ObjectId[] | undefined,
+  ) {
     const topicIds: Types.ObjectId[] = [];
     const mentorIds: Types.ObjectId[] = [];
 
-    if (createContentDto.topics) {
-      for (const topicId of createContentDto.topics) {
+    if (topics) {
+      for (const topicId of topics) {
         if (!this.topicService.exists(topicId))
           throw new NotFoundException(`Topic ${topicId} not found`);
         topicIds.push(topicId);
       }
     }
 
-    if (createContentDto.mentors) {
-      for (const mentorId of createContentDto.mentors) {
+    if (mentors) {
+      for (const mentorId of mentors) {
         if (!this.mentorService.exists(mentorId))
           throw new NotFoundException(`Mentor ${mentorId} not found`);
         mentorIds.push(mentorId);
       }
     }
 
-    if (topicIds.length == 0 && mentorIds.length == 0)
-      throw new NotFoundException(
-        'Content must have atleast a mentor or a topic',
-      );
-
-    const created = await this.contentModel.create({
-      ...createContentDto,
-      topics: topicIds,
-      mentors: mentorIds,
-      createdBy: admin,
-      updatedBy: admin,
-    });
-
-    return created.toObject();
+    return { topics: topicIds, mentors: mentorIds };
   }
 
   async findOne(id: Types.ObjectId, user: User): Promise<ContentInfoDto> {
@@ -138,7 +189,7 @@ export class ContentService {
     return this.contentModel.findOne({ _id: id, status: true }).lean().exec();
   }
 
-  async update(content: Partial<Content>): Promise<Content | null> {
+  private async update(content: Partial<Content>): Promise<Content | null> {
     return this.contentModel
       .findByIdAndUpdate(content._id, content, { new: true })
       .lean()
@@ -159,7 +210,6 @@ export class ContentService {
   async findByIdPopulated(id: Types.ObjectId): Promise<Content | null> {
     return this.contentModel
       .findById(id)
-      .select('+mentors +topics')
       .populate({
         path: 'createdBy',
         match: { status: true },
