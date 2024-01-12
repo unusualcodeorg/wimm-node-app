@@ -25,6 +25,71 @@ export class ContentService {
     );
   }
 
+  async markView(id: Types.ObjectId): Promise<boolean> {
+    const content = await this.findById(id);
+    if (!content) throw new NotFoundException('Content Not Found');
+
+    if (!content.views) content.views = 0; // fix for older data
+
+    const updated = await this.update({
+      _id: content._id,
+      views: content.views + 1,
+    });
+
+    return updated != null;
+  }
+
+  async markShare(id: Types.ObjectId): Promise<boolean> {
+    const content = await this.findById(id);
+    if (!content) throw new NotFoundException('Content Not Found');
+
+    if (!content.shares) content.shares = 0; // fix for older data
+
+    const updated = await this.update({
+      _id: content._id,
+      shares: content.shares + 1,
+    });
+
+    return updated != null;
+  }
+
+  async markLike(id: Types.ObjectId, user: User): Promise<boolean> {
+    const content = await this.findById(id);
+    if (!content) throw new NotFoundException('Content Not Found');
+
+    const likedContent = await this.findUserAndContentLike(user, content);
+
+    if (!likedContent) {
+      const updated = await this.addLikeForUser(
+        content,
+        user,
+        content.likes + 1,
+      );
+
+      return updated != null;
+    }
+
+    return true;
+  }
+
+  async removeLike(id: Types.ObjectId, user: User): Promise<boolean> {
+    const content = await this.findById(id);
+    if (!content) throw new NotFoundException('Content Not Found');
+
+    const likedContent = await this.findUserAndContentLike(user, content);
+
+    if (likedContent) {
+      const updated = await this.removeLikeForUser(
+        content,
+        user,
+        content.likes - 1,
+      );
+      return updated != null;
+    }
+
+    return true;
+  }
+
   async findById(id: Types.ObjectId): Promise<Content | null> {
     return this.contentModel.findOne({ _id: id, status: true }).lean().exec();
   }
@@ -34,7 +99,7 @@ export class ContentService {
     return created.toObject();
   }
 
-  async update(content: Content): Promise<Content | null> {
+  async update(content: Partial<Content>): Promise<Content | null> {
     return this.contentModel
       .findByIdAndUpdate(content._id, content, { new: true })
       .lean()
