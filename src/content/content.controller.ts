@@ -50,4 +50,11 @@ export class ContentController {
     if (!marked) return 'Content like removed failure.';
     return 'Content like removed successfully.';
   }
+
+  @Post('mark/share')
+  async markShare(@Body() mongoIdDto: MongoIdDto): Promise<string> {
+    const marked = await this.contentService.markShare(mongoIdDto.id);
+    if (!marked) return 'Content share marked failure.';
+    return 'Content share marked successfully.';
+  }
 }
