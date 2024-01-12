@@ -6,7 +6,7 @@ export class UpdateProfileDto {
   readonly name?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   @MaxLength(500)
   readonly profilePicUrl?: string;
 

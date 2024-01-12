@@ -11,7 +11,7 @@ export class MentorInfoDto {
   @IsNotEmpty()
   name: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   thumbnail: string;
 
   @IsNotEmpty()
@@ -23,7 +23,7 @@ export class MentorInfoDto {
   @IsNotEmpty()
   description: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   coverImgUrl: string;
 
   constructor(mentor: Mentor) {

@@ -14,7 +14,7 @@ export class MetaContentEntity {
   description?: string;
 
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   thumbnail?: string;
 
   @IsNotEmpty()

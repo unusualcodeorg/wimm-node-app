@@ -31,7 +31,7 @@ export class ContentInfoDto {
   @IsNotEmpty()
   description?: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   thumbnail: string;
 
   @IsNotEmpty()

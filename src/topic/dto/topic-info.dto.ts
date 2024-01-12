@@ -17,10 +17,10 @@ export class TopicInfoDto {
   @IsNotEmpty()
   description: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   thumbnail: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   coverImgUrl: string;
 
   constructor(topic: Topic) {

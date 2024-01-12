@@ -30,7 +30,7 @@ export class CreateContentDto {
   @MaxLength(2000)
   readonly description: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   @MaxLength(300)
   readonly thumbnail: string;
 

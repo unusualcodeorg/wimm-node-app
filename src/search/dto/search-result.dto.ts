@@ -13,7 +13,7 @@ export class SearchResultDto {
   @IsEnum(Category)
   category: Category;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   thumbnail: string;
 
   @IsNotEmpty()

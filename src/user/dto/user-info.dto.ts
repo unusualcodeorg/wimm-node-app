@@ -12,7 +12,7 @@ export class UserInfoDto {
   @IsOptional()
   readonly name?: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   @IsOptional()
   readonly profilePicUrl?: string;
 

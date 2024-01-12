@@ -20,11 +20,11 @@ export class CreateTopicDto {
   @MaxLength(10000)
   readonly description: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   @MaxLength(300)
   readonly thumbnail: string;
 
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   @MaxLength(300)
   readonly coverImgUrl: string;
 
