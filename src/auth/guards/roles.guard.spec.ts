@@ -11,19 +11,8 @@ describe('RoleGuard', () => {
   const user = { roles: [] as Role[] } as User;
   const viewer = { roles: [{ code: RoleCode.VIEWER } as Role] } as User;
 
-  let currentUser: User | null = null;
-  let currentRoleCode: RoleCode | null = null;
-
-  const reflectorMock = {
-    get: jest.fn(() => {
-      if (!currentRoleCode) return null;
-      return [currentRoleCode];
-    }),
-  };
-
-  const requestMock = jest.fn(() => ({
-    user: currentUser,
-  }));
+  const reflectorGetMock = jest.fn();
+  const requestMock = jest.fn();
 
   const context = {
     getHandler: () => ({}),
@@ -35,58 +24,65 @@ describe('RoleGuard', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    requestMock.mockClear();
     const module = await Test.createTestingModule({
-      providers: [RolesGuard, { provide: Reflector, useValue: reflectorMock }],
+      providers: [
+        RolesGuard,
+        {
+          provide: Reflector,
+          useValue: {
+            get: reflectorGetMock,
+          },
+        },
+      ],
     }).compile();
 
     roleGuard = module.get(RolesGuard);
   });
 
   it('should pass if role is not provided', async () => {
+    reflectorGetMock.mockReturnValue(null);
     const pass = await roleGuard.canActivate(context);
     expect(pass).toBe(true);
-    expect(reflectorMock.get).toHaveBeenCalledTimes(2);
+    expect(reflectorGetMock).toHaveBeenCalledTimes(2);
     expect(requestMock).not.toHaveBeenCalled();
   });
 
   it('should throw ForbiddenException if user is null', async () => {
-    currentUser = null;
-    currentRoleCode = RoleCode.VIEWER;
+    reflectorGetMock.mockReturnValue([RoleCode.VIEWER]);
+    requestMock.mockReturnValue({ user: null });
     await expect(roleGuard.canActivate(context)).rejects.toBeInstanceOf(
       ForbiddenException,
     );
-    expect(reflectorMock.get).toHaveBeenCalled();
+    expect(reflectorGetMock).toHaveBeenCalled();
     expect(requestMock).toHaveBeenCalledTimes(1);
   });
 
   it('should throw ForbiddenException if user does not have no role', async () => {
-    currentUser = user;
-    currentRoleCode = RoleCode.VIEWER;
+    requestMock.mockReturnValue({ user: user });
+    reflectorGetMock.mockReturnValue([RoleCode.VIEWER]);
     await expect(roleGuard.canActivate(context)).rejects.toBeInstanceOf(
       ForbiddenException,
     );
-    expect(reflectorMock.get).toHaveBeenCalled();
+    expect(reflectorGetMock).toHaveBeenCalled();
     expect(requestMock).toHaveBeenCalledTimes(1);
   });
 
   it('should throw ForbiddenException if user does not have allowed role', async () => {
-    currentUser = viewer;
-    currentRoleCode = RoleCode.ADMIN;
+    requestMock.mockReturnValue({ user: viewer });
+    reflectorGetMock.mockReturnValue([RoleCode.ADMIN]);
     await expect(roleGuard.canActivate(context)).rejects.toBeInstanceOf(
       ForbiddenException,
     );
-    expect(reflectorMock.get).toHaveBeenCalled();
+    expect(reflectorGetMock).toHaveBeenCalled();
     expect(requestMock).toHaveBeenCalledTimes(1);
   });
 
   it('should pass if user has allowed role', async () => {
-    currentUser = viewer;
-    currentRoleCode = RoleCode.VIEWER;
+    requestMock.mockReturnValue({ user: viewer });
+    reflectorGetMock.mockReturnValue([RoleCode.VIEWER]);
     const pass = await roleGuard.canActivate(context);
-
     expect(pass).toBe(true);
-    expect(reflectorMock.get).toHaveBeenCalled();
+    expect(reflectorGetMock).toHaveBeenCalled();
     expect(requestMock).toHaveBeenCalledTimes(1);
   });
 });
