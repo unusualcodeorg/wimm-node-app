@@ -12,8 +12,6 @@ describe('ApiKeyGuard', () => {
   const generalKey = 'general';
   const serviceKey = 'service';
 
-  let currentPermission: Permission | null = null;
-
   const generalApikey = {
     key: generalKey,
     permissions: [Permission.GENERAL],
@@ -24,32 +22,16 @@ describe('ApiKeyGuard', () => {
     permissions: [Permission.XYZ_SERVICE],
   } as ApiKey;
 
-  const coreServiceMock = {
-    findApiKey: jest.fn((key) => {
-      switch (key) {
-        case generalKey:
-          return generalApikey;
-        case serviceKey:
-          return serviceApikey;
-        default:
-          return null;
-      }
-    }),
-  };
-  const reflectorMock = {
-    get: jest.fn(() => {
-      if (currentPermission) return [currentPermission];
-      return null;
-    }),
-  };
+  const findApiKeyMock = jest.fn();
+  const reflectorGetMock = jest.fn();
 
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApiKeyGuard,
-        { provide: CoreService, useValue: coreServiceMock },
-        { provide: Reflector, useValue: reflectorMock },
+        { provide: CoreService, useValue: { findApiKey: findApiKeyMock } },
+        { provide: Reflector, useValue: { get: reflectorGetMock } },
       ],
     }).compile();
 
@@ -61,46 +43,54 @@ describe('ApiKeyGuard', () => {
       apiKeyGuard.canActivate(getExecutionContext()),
     ).rejects.toBeInstanceOf(ForbiddenException);
 
-    expect(reflectorMock.get).toHaveBeenCalledTimes(1);
-    expect(coreServiceMock.findApiKey).not.toHaveBeenCalled();
+    expect(reflectorGetMock).toHaveBeenCalledTimes(1);
+    expect(findApiKeyMock).not.toHaveBeenCalled();
   });
 
   it('should throw ForbiddenException if wrong API key is sent', async () => {
     const currentKey = 'wrong';
+    findApiKeyMock.mockReturnValue(null);
+
     await expect(
       apiKeyGuard.canActivate(getExecutionContext(currentKey)),
     ).rejects.toBeInstanceOf(ForbiddenException);
 
-    expect(reflectorMock.get).toHaveBeenCalledTimes(1);
-    expect(coreServiceMock.findApiKey).toHaveBeenCalled();
+    expect(reflectorGetMock).toHaveBeenCalledTimes(1);
+    expect(findApiKeyMock).toHaveBeenCalledWith(currentKey);
   });
 
   it('should throw ForbiddenException if API key does not have permission', async () => {
-    currentPermission = Permission.GENERAL;
+    reflectorGetMock.mockReturnValue([Permission.GENERAL]);
+    findApiKeyMock.mockReturnValue(serviceApikey);
+
     await expect(
       apiKeyGuard.canActivate(getExecutionContext(serviceKey)),
     ).rejects.toBeInstanceOf(ForbiddenException);
 
-    expect(reflectorMock.get).toHaveBeenCalledTimes(1);
-    expect(coreServiceMock.findApiKey).toHaveBeenCalled();
+    expect(reflectorGetMock).toHaveBeenCalledTimes(1);
+    expect(findApiKeyMock).toHaveBeenCalledWith(serviceKey);
   });
 
   it('should pass if API key has general permission', async () => {
-    currentPermission = Permission.GENERAL;
+    reflectorGetMock.mockReturnValue([Permission.GENERAL]);
+    findApiKeyMock.mockReturnValue(generalApikey);
+
     const pass = await apiKeyGuard.canActivate(getExecutionContext(generalKey));
 
     expect(pass).toBe(true);
-    expect(reflectorMock.get).toHaveBeenCalledTimes(1);
-    expect(coreServiceMock.findApiKey).toHaveBeenCalled();
+    expect(reflectorGetMock).toHaveBeenCalledTimes(1);
+    expect(findApiKeyMock).toHaveBeenCalledWith(generalKey);
   });
 
   it('should pass if API key has necessary permission', async () => {
-    currentPermission = Permission.XYZ_SERVICE;
+    reflectorGetMock.mockReturnValue([Permission.XYZ_SERVICE]);
+    findApiKeyMock.mockReturnValue(serviceApikey);
+
     const pass = await apiKeyGuard.canActivate(getExecutionContext(serviceKey));
 
     expect(pass).toBe(true);
-    expect(reflectorMock.get).toHaveBeenCalledTimes(1);
-    expect(coreServiceMock.findApiKey).toHaveBeenCalled();
+    expect(reflectorGetMock).toHaveBeenCalledTimes(1);
+    expect(findApiKeyMock).toHaveBeenCalledWith(serviceKey);
   });
 });
 
