@@ -44,8 +44,8 @@ describe('RoleGuard', () => {
   });
 
   it('should pass if role is not provided', async () => {
-    const pass = roleGuard.canActivate(context);
-    expect(pass).resolves.toBe(true);
+    const pass = await roleGuard.canActivate(context);
+    expect(pass).toBe(true);
     expect(reflectorMock.get).toHaveBeenCalledTimes(2);
     expect(requestMock).not.toHaveBeenCalled();
   });
@@ -53,9 +53,9 @@ describe('RoleGuard', () => {
   it('should throw ForbiddenException if user is null', async () => {
     currentUser = null;
     currentRoleCode = RoleCode.VIEWER;
-    roleGuard
-      .canActivate(context)
-      .catch((e) => expect(e).toBeInstanceOf(ForbiddenException));
+    await expect(roleGuard.canActivate(context)).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
     expect(reflectorMock.get).toHaveBeenCalled();
     expect(requestMock).toHaveBeenCalledTimes(1);
   });
@@ -63,9 +63,9 @@ describe('RoleGuard', () => {
   it('should throw ForbiddenException if user does not have no role', async () => {
     currentUser = user;
     currentRoleCode = RoleCode.VIEWER;
-    roleGuard
-      .canActivate(context)
-      .catch((e) => expect(e).toBeInstanceOf(ForbiddenException));
+    await expect(roleGuard.canActivate(context)).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
     expect(reflectorMock.get).toHaveBeenCalled();
     expect(requestMock).toHaveBeenCalledTimes(1);
   });
@@ -73,9 +73,9 @@ describe('RoleGuard', () => {
   it('should throw ForbiddenException if user does not have allowed role', async () => {
     currentUser = viewer;
     currentRoleCode = RoleCode.ADMIN;
-    roleGuard
-      .canActivate(context)
-      .catch((e) => expect(e).toBeInstanceOf(ForbiddenException));
+    await expect(roleGuard.canActivate(context)).rejects.toBeInstanceOf(
+      ForbiddenException,
+    );
     expect(reflectorMock.get).toHaveBeenCalled();
     expect(requestMock).toHaveBeenCalledTimes(1);
   });
@@ -83,9 +83,9 @@ describe('RoleGuard', () => {
   it('should pass if user has allowed role', async () => {
     currentUser = viewer;
     currentRoleCode = RoleCode.VIEWER;
-    const pass = roleGuard.canActivate(context);
+    const pass = await roleGuard.canActivate(context);
 
-    expect(pass).resolves.toBe(true);
+    expect(pass).toBe(true);
     expect(reflectorMock.get).toHaveBeenCalled();
     expect(requestMock).toHaveBeenCalledTimes(1);
   });
