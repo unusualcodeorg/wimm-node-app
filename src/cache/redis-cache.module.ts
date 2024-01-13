@@ -13,6 +13,6 @@ import { CacheService } from './cache.service';
     }),
   ],
   providers: [CacheService],
-  exports: [CacheService],
+  exports: [CacheService, CacheModule],
 })
 export class RedisCacheModule {}

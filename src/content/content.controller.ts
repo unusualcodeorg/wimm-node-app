@@ -1,15 +1,25 @@
-import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Request,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ContentService } from './content.service';
 import { ProtectedRequest } from '../core/http/request';
 import { MongoIdTransformer } from '../common/mongoid.transformer';
 import { Types } from 'mongoose';
 import { ContentInfoDto } from './dto/content-info.dto';
 import { MongoIdDto } from '../common/mongoid.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('content')
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
+  @UseInterceptors(CacheInterceptor)
   @Get('id/:id')
   async findOne(
     @Param('id', MongoIdTransformer) id: Types.ObjectId,

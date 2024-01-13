@@ -10,6 +10,7 @@ import { ContentPrivateController } from './content-private.controller';
 import { ContentsController } from './contents.controller';
 import { ContentsService } from './contents.service';
 import { SubscriptionModule } from '../subscription/subscription.module';
+import { RedisCacheModule } from '../cache/redis-cache.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SubscriptionModule } from '../subscription/subscription.module';
     TopicModule,
     MentorModule,
     SubscriptionModule,
+    RedisCacheModule,
   ],
   controllers: [
     ContentController,
