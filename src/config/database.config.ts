@@ -12,7 +12,7 @@ export interface DatabaseConfig {
   maxPoolSize: number;
 }
 
-export default registerAs('database', () => ({
+export default registerAs(DatabaseConfigName, () => ({
   name: process.env.DB_NAME || '',
   host: process.env.DB_HOST || '',
   port: process.env.DB_PORT || '',
