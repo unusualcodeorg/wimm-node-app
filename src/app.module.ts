@@ -19,6 +19,8 @@ import { SubscriptionModule } from './subscription/subscription.module';
 import { ContentModule } from './content/content.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { SearchModule } from './search/search.module';
+import { RedisCacheModule } from './cache/redis-cache.module';
+import cacheConfig from './config/cache.config';
 
 @Module({
   imports: [
@@ -26,6 +28,7 @@ import { SearchModule } from './search/search.module';
       load: [
         serverConfig,
         databaseConfig,
+        cacheConfig,
         authkeyConfig,
         tokenConfig,
         diskConfig,
@@ -36,6 +39,7 @@ import { SearchModule } from './search/search.module';
       imports: [ConfigModule],
       useClass: DatabaseFactory,
     }),
+    RedisCacheModule,
     CoreModule,
     AuthModule,
     MessageModule,
