@@ -12,7 +12,7 @@ import { ProtectedRequest } from '../../core/http/request';
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     let roles = this.reflector.get(Roles, context.getHandler());
     if (!roles) roles = this.reflector.get(Roles, context.getClass());
     if (roles) {
