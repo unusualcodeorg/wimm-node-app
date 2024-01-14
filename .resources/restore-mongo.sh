@@ -1,0 +1,1 @@
+mongorestore -d $DB_NAME /db-dump
