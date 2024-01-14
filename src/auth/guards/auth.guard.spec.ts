@@ -12,7 +12,9 @@ import { ProtectedRequest } from '../../core/http/request';
 
 describe('AuthGuard', () => {
   let authGuard: AuthGuard;
-  let isPublic = false;
+
+  const signedInUser = {} as User;
+  const signedOutUser = {} as User;
 
   const signedInToken = 'signedInToken';
   const signOutToken = 'signOutToken';
@@ -27,41 +29,13 @@ describe('AuthGuard', () => {
     prm: 'prm',
   } as TokenPayload;
 
-  const user = {} as User;
-  const signedOutUser = {} as User;
+  const getAllAndOverrideMock = jest.fn();
+  const verifyTokenMock = jest.fn();
+  const validatePayloadMock = jest.fn();
+  const findKeystoreMock = jest.fn();
+  const findUserByIdMock = jest.fn();
 
-  const keystore = {} as Keystore;
-  let request: ProtectedRequest;
-
-  const authServiceMock = {
-    verifyToken: jest.fn((token) => {
-      if (token === signedInToken) return signedInTokenPayload;
-      if (token === signOutToken) return signOutTokenPayload;
-      throw new UnauthorizedException();
-    }),
-    validatePayload: jest.fn((payload) => {
-      return (
-        payload === signedInTokenPayload || payload === signOutTokenPayload
-      );
-    }),
-    findKeystore: jest.fn((usr, prm) => {
-      if (usr === user && prm === signedInTokenPayload.prm) return keystore;
-      return null;
-    }),
-  };
-  const userServiceMock = {
-    findUserById: jest.fn((id: Types.ObjectId) => {
-      if (id.toHexString() === signedInTokenPayload.sub) return user;
-      if (id.toHexString() === signOutTokenPayload.sub) return signedOutUser;
-      return null;
-    }),
-  };
-
-  const reflectorMock = {
-    getAllAndOverride: jest.fn(() => isPublic),
-  };
-
-  const getRequestMock = jest.fn(() => request);
+  const getRequestMock = jest.fn();
 
   const context = {
     getHandler: () => ({}),
@@ -76,9 +50,26 @@ describe('AuthGuard', () => {
     const module = await Test.createTestingModule({
       providers: [
         AuthGuard,
-        { provide: Reflector, useValue: reflectorMock },
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: UserService, useValue: userServiceMock },
+        {
+          provide: Reflector,
+          useValue: {
+            getAllAndOverride: getAllAndOverrideMock,
+          },
+        },
+        {
+          provide: AuthService,
+          useValue: {
+            verifyToken: verifyTokenMock,
+            validatePayload: validatePayloadMock,
+            findKeystore: findKeystoreMock,
+          },
+        },
+        {
+          provide: UserService,
+          useValue: {
+            findUserById: findUserByIdMock,
+          },
+        },
       ],
     }).compile();
 
@@ -86,74 +77,95 @@ describe('AuthGuard', () => {
   });
 
   it('should pass for public api', async () => {
-    isPublic = true;
-    request = { headers: {} } as ProtectedRequest;
+    const request = { headers: {} } as ProtectedRequest;
+    getRequestMock.mockReturnValue(request);
+    getAllAndOverrideMock.mockReturnValue(true);
+
     const pass = authGuard.canActivate(context);
     expect(pass).resolves.toBe(true);
-    expect(reflectorMock.getAllAndOverride).toHaveBeenCalled();
+    expect(getAllAndOverrideMock).toHaveBeenCalled();
     expect(getRequestMock).not.toHaveBeenCalled();
   });
 
   it('should throw UnauthorizedException if auth token is not sent', async () => {
-    isPublic = false;
-    request = { headers: {} } as ProtectedRequest;
+    const request = { headers: {} } as ProtectedRequest;
+    getAllAndOverrideMock.mockReturnValue(false);
+    getRequestMock.mockReturnValue(request);
+
     const spyExtractTokenFromHeader = jest.spyOn(
       authGuard as any,
       'extractTokenFromHeader',
     );
+
     await expect(authGuard.canActivate(context)).rejects.toBeInstanceOf(
       UnauthorizedException,
     );
-    expect(reflectorMock.getAllAndOverride).toHaveBeenCalled();
+    expect(getAllAndOverrideMock).toHaveBeenCalled();
     expect(getRequestMock).toHaveBeenCalled();
     expect(spyExtractTokenFromHeader).toHaveBeenCalledWith(request);
-    expect(authServiceMock.verifyToken).not.toHaveBeenCalled();
+    expect(verifyTokenMock).not.toHaveBeenCalled();
   });
 
   it('should throw UnauthorizedException if invalid token is sent', async () => {
-    isPublic = false;
-    request = {
+    const request = {
       headers: { authorization: 'Bearer wrongToken' },
     } as ProtectedRequest;
+
+    getAllAndOverrideMock.mockReturnValue(false);
+    getRequestMock.mockReturnValue(request);
+    verifyTokenMock.mockRejectedValue(new UnauthorizedException());
+
     await expect(authGuard.canActivate(context)).rejects.toBeInstanceOf(
       UnauthorizedException,
     );
-    expect(reflectorMock.getAllAndOverride).toHaveBeenCalled();
+    expect(getAllAndOverrideMock).toHaveBeenCalled();
     expect(getRequestMock).toHaveBeenCalled();
-    expect(authServiceMock.verifyToken).toHaveBeenCalledWith('wrongToken');
-    expect(authServiceMock.validatePayload).not.toHaveBeenCalled();
+    expect(verifyTokenMock).toHaveBeenCalledWith('wrongToken');
+    expect(validatePayloadMock).not.toHaveBeenCalled();
   });
 
   it('should throw UnauthorizedException if signout user token is sent', async () => {
-    isPublic = false;
-    request = {
+    const request = {
       headers: { authorization: 'Bearer ' + signOutToken },
     } as ProtectedRequest;
+
+    getAllAndOverrideMock.mockReturnValue(false);
+    getRequestMock.mockReturnValue(request);
+    verifyTokenMock.mockReturnValue(signOutTokenPayload);
+    validatePayloadMock.mockReturnValue(true);
+    findUserByIdMock.mockReturnValue(signedOutUser);
+    findKeystoreMock.mockReturnValue(null);
 
     await expect(authGuard.canActivate(context)).rejects.toBeInstanceOf(
       UnauthorizedException,
     );
-    expect(reflectorMock.getAllAndOverride).toHaveBeenCalled();
+    expect(getAllAndOverrideMock).toHaveBeenCalled();
     expect(getRequestMock).toHaveBeenCalled();
-    expect(authServiceMock.verifyToken).toHaveBeenCalledWith(signOutToken);
-    expect(authServiceMock.validatePayload).toHaveBeenCalled();
-    expect(userServiceMock.findUserById).toHaveBeenCalled();
-    expect(authServiceMock.findKeystore).toHaveBeenCalled();
+    expect(verifyTokenMock).toHaveBeenCalledWith(signOutToken);
+    expect(validatePayloadMock).toHaveBeenCalled();
+    expect(findUserByIdMock).toHaveBeenCalled();
+    expect(findKeystoreMock).toHaveBeenCalled();
   });
 
   it('should return true if correct token is sent for logged in user', async () => {
-    isPublic = false;
-    request = {
+    const request = {
       headers: { authorization: 'Bearer ' + signedInToken },
     } as ProtectedRequest;
 
+    getAllAndOverrideMock.mockReturnValue(false);
+    getRequestMock.mockReturnValue(request);
+    verifyTokenMock.mockReturnValue(signedInTokenPayload);
+    validatePayloadMock.mockReturnValue(true);
+    findUserByIdMock.mockReturnValue(signedInUser);
+    findKeystoreMock.mockReturnValue({} as Keystore);
+
     const pass = await authGuard.canActivate(context);
     expect(pass).toBe(true);
-    expect(reflectorMock.getAllAndOverride).toHaveBeenCalled();
+    expect(getAllAndOverrideMock).toHaveBeenCalled();
     expect(getRequestMock).toHaveBeenCalled();
-    expect(authServiceMock.verifyToken).toHaveBeenCalledWith(signedInToken);
-    expect(authServiceMock.validatePayload).toHaveBeenCalled();
-    expect(userServiceMock.findUserById).toHaveBeenCalled();
-    expect(authServiceMock.findKeystore).toHaveBeenCalled();
+    expect(verifyTokenMock).toHaveBeenCalledWith(signedInToken);
+    expect(validatePayloadMock).toHaveBeenCalled();
+    expect(findUserByIdMock).toHaveBeenCalled();
+    expect(findKeystoreMock).toHaveBeenCalled();
   });
 });
