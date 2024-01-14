@@ -41,11 +41,13 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=$DB_ADMIN
       - MONGO_INITDB_ROOT_PASSWORD=$DB_ADMIN_PWD
       - MONGO_INITDB_DATABASE=$DB_NAME
-    command: mongod --bind_ip_all
     ports:
       - '$DB_PORT:27017'
+    command: mongod --bind_ip_all
     volumes:
       - ./.resources/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./.resources/restore-mongo.sh:/docker-entrypoint-initdb.d/restore-mongo.sh:ro
+      - ./.resources/wimm-db-dump:/db-dump
         # The named volume dbdata will persist the data stored in Mongo’s default data directory, /data/db.
         # This will ensure that you don’t lose data in cases where you stop or remove containers.
       - dbdata:/data/db
