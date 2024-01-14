@@ -10,7 +10,7 @@ function seed(dbName, user, password) {
   db.createCollection('roles');
 
   db.api_keys.insert({
-    key: 'GCMUDiuY5a7WvyUNt9n3QztToSHzK7Uj',
+    key: '1D3F2DD1A5DE725DD4DF1D82BBB37',
     permissions: ['GENERAL'],
     comments: ['To be used by the xyz vendor'],
     version: 1,
