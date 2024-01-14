@@ -11,12 +11,11 @@ export class CacheConfigFactory implements CacheOptionsFactory {
   async createCacheOptions(): Promise<CacheModuleOptions> {
     const cacheConfig =
       this.configService.getOrThrow<CacheConfig>(CacheConfigName);
+    const redisURL = `redis://:${cacheConfig.password}@${cacheConfig.host}:${cacheConfig.port}`;
     return {
       store: redisStore,
-      host: cacheConfig.host,
-      port: cacheConfig.host,
+      url: redisURL,
       ttl: cacheConfig.ttl,
-      // password: cacheConfig.password,
     };
   }
 }

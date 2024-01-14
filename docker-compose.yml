@@ -57,7 +57,7 @@ services:
     env_file: .env
     ports:
       - '$REDIS_PORT:6379'
-    command: redis-server --bind 0.0.0.0 --save 20 1 --loglevel warning --requirepass $REDIS_PASSWORD
+    command: redis-server --bind localhost --bind 0.0.0.0 --save 20 1 --loglevel warning --requirepass $REDIS_PASSWORD
     volumes:
       - cache:/data/cache
 
