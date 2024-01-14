@@ -18,8 +18,6 @@ jobs:
       run: cp keys/public.pem.example keys/public.pem
     - name: Create private.pem
       run: cp keys/private.pem.example keys/private.pem
-    - name: Create tests .env
-      run: cp tests/.env.test.example tests/.env.test
     - name: Build docker images
       run: docker-compose build
     - name: Run docker images
