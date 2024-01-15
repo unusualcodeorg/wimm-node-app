@@ -17,7 +17,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:unit": "jest '.*\\.spec\\.ts$'",
+    "test:e2e": "jest '.*\\.e2e-spec\\.ts$'"
   },
   "dependencies": {
     "@nestjs/cache-manager": "^2.2.0",
@@ -73,15 +74,17 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
+    "rootDir": ".",
+    "testRegex": ".*\\.(spec|e2e-spec)\\.ts$",
+    "preset": "ts-jest",
+    "roots": [
+      "<rootDir>/src",
+      "<rootDir>/test"
     ],
-    "coverageDirectory": "../coverage",
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.(t|j)s"
+    ],
+    "coverageDirectory": "coverage",
     "testEnvironment": "node"
   }
 }
