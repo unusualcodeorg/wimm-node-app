@@ -1,6 +1,7 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
+import { RedisStore } from './redis-cache';
 
 @Injectable()
 export class CacheService {
@@ -12,5 +13,9 @@ export class CacheService {
 
   async setValue(key: string, value: string): Promise<void> {
     await this.cache.set(key, value);
+  }
+
+  getStore(): RedisStore {
+    return this.cache.store as RedisStore;
   }
 }

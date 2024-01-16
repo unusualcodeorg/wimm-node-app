@@ -15,7 +15,7 @@ import '@redis/time-series';
 
 import type { Cache, Store, Config } from 'cache-manager';
 
-type Clients = RedisClientType | RedisClusterType;
+export type Clients = RedisClientType | RedisClusterType;
 
 export type RedisCache<T extends Clients = RedisClientType> = Cache<
   RedisStore<T>
