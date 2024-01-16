@@ -34,15 +34,6 @@ export class ContentService {
       createContentDto.mentors,
     );
 
-    if (
-      topicsAndMentors.topics.length == 0 &&
-      topicsAndMentors.mentors.length == 0
-    ) {
-      throw new NotFoundException(
-        'Content must have atleast a mentor or a topic',
-      );
-    }
-
     const created = await this.contentModel.create({
       ...createContentDto,
       topics: topicsAndMentors.topics,
@@ -263,6 +254,10 @@ export class ContentService {
       )
       .lean()
       .exec();
+  }
+
+  async deleteFromDb(content: Content) {
+    return this.contentModel.findByIdAndDelete(content._id);
   }
 
   async findByIdPopulated(id: Types.ObjectId): Promise<Content | null> {

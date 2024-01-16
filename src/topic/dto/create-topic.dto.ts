@@ -32,4 +32,8 @@ export class CreateTopicDto {
   @Min(0)
   @Max(1)
   readonly score: number;
+
+  constructor(params: CreateTopicDto) {
+    Object.assign(this, params);
+  }
 }

@@ -36,4 +36,8 @@ export class CreateMentorDto {
   @Min(0)
   @Max(1)
   readonly score: number;
+
+  constructor(params: CreateMentorDto) {
+    Object.assign(this, params);
+  }
 }

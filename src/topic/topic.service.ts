@@ -54,6 +54,10 @@ export class TopicService {
       .exec();
   }
 
+  async deleteFromDb(topic: Topic) {
+    return this.topicModel.findByIdAndDelete(topic._id);
+  }
+
   async exists(id: Types.ObjectId): Promise<boolean> {
     const exists = await this.topicModel.exists(id);
     return exists != null;

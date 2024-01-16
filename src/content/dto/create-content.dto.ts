@@ -61,4 +61,8 @@ export class CreateContentDto {
   @Min(0)
   @Max(1)
   readonly score: number;
+
+  constructor(params: CreateContentDto) {
+    Object.assign(this, params);
+  }
 }

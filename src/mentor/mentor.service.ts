@@ -54,6 +54,10 @@ export class MentorService {
       .exec();
   }
 
+  async deleteFromDb(mentor: Mentor) {
+    return this.mentorModel.findByIdAndDelete(mentor._id);
+  }
+
   async exists(id: Types.ObjectId): Promise<boolean> {
     const exists = await this.mentorModel.exists(id);
     return exists != null;
