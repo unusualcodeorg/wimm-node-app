@@ -242,4 +242,13 @@ export class AuthService {
   private decodeToken(token: string) {
     return this.jwtService.decode<TokenPayload>(token);
   }
+
+  async createRole(role: Omit<Role, '_id' | 'status'>): Promise<Role> {
+    const created = await this.roleModel.create(role);
+    return created.toObject();
+  }
+
+  async deleteRole(role: Role) {
+    return this.roleModel.findByIdAndDelete(role._id).lean().exec();
+  }
 }

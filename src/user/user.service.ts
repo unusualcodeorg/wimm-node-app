@@ -87,8 +87,8 @@ export class UserService {
       .exec();
   }
 
-  async delete(user: User): Promise<User | null> {
-    return this.userModel.findByIdAndUpdate(user._id);
+  async delete(user: User) {
+    return this.userModel.findByIdAndDelete(user._id);
   }
 
   async deactivate(user: User): Promise<User | null> {
