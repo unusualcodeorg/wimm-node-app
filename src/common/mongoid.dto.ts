@@ -11,4 +11,8 @@ export class MongoIdDto {
   })
   @IsMongoIdObject()
   readonly id: Types.ObjectId;
+
+  constructor(props: MongoIdDto) {
+    Object.assign(this, props);
+  }
 }
