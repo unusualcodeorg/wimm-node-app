@@ -27,7 +27,7 @@ describe('AppController - API KEY (e2e)', () => {
 
   it('should throw 403 when x-api-key is not provided', () => {
     return request(app.getHttpServer())
-      .get('/mentors/latest')
+      .get('/mentors/latest?pageNumber=1&pageItemCount=10')
       .expect(403)
       .expect((response) => {
         expect(response.body.statusCode).toEqual(StatusCode.FAILURE);
@@ -45,7 +45,7 @@ describe('AppController - API KEY (e2e)', () => {
 
     try {
       await request(app.getHttpServer())
-        .get('/mentors/latest')
+        .get('/mentors/latest?pageNumber=1&pageItemCount=10')
         .set('Content-Type', 'application/json')
         .set('x-api-key', 'wrong_api_key')
         .expect(403)
@@ -68,7 +68,7 @@ describe('AppController - API KEY (e2e)', () => {
 
     try {
       await request(app.getHttpServer())
-        .get('/mentors/latest')
+        .get('/mentors/latest?pageNumber=1&pageItemCount=10')
         .set('Content-Type', 'application/json')
         .set('x-api-key', apiKey.key)
         .expect(403)
@@ -91,7 +91,7 @@ describe('AppController - API KEY (e2e)', () => {
 
     try {
       await request(app.getHttpServer())
-        .get('/mentors/latest')
+        .get('/mentors/latest?pageNumber=1&pageItemCount=10')
         .set('Content-Type', 'application/json')
         .set('x-api-key', apiKey.key)
         .expect(401)

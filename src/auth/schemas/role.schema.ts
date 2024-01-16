@@ -13,7 +13,12 @@ export enum RoleCode {
 export class Role {
   readonly _id: Types.ObjectId;
 
-  @Prop({ type: String, required: true, enum: Object.values(RoleCode) })
+  @Prop({
+    type: String,
+    required: true,
+    unique: true,
+    enum: Object.values(RoleCode),
+  })
   readonly code: RoleCode;
 
   @Prop({ default: true })
