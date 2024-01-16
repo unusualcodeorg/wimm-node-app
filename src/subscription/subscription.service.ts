@@ -240,7 +240,7 @@ export class SubscriptionService {
     return subscription !== null;
   }
 
-  async deleteSubscription(id: Types.ObjectId) {
-    return this.subscriptionModel.findByIdAndDelete(id).lean().exec();
+  async deleteUserSubscription(user: User) {
+    return this.subscriptionModel.deleteOne({ user: user }).lean().exec();
   }
 }

@@ -100,6 +100,7 @@ describe('Subscription Controller - (e2e)', () => {
     await userService.delete(userAuthDto.user as User);
     await topicService.deleteFromDb(topic);
     await mentorService.deleteFromDb(mentor);
+    await subscriptionService.deleteUserSubscription(userAuthDto.user as User);
     await authService.signOutFromEverywhere(userAuthDto.user as User);
     await app.close();
   });
@@ -119,13 +120,7 @@ describe('Subscription Controller - (e2e)', () => {
       .expect(201)
       .expect(async (response) => {
         expect(response.body.statusCode).toEqual(StatusCode.SUCCESS);
-        expect(response.body.data).not.toBeNull();
-        expect(response.body.data._id).not.toBeNull();
-        expect(response.body.data.result).toEqual('Followed Successfully');
-
-        if (response.body.data) {
-          await subscriptionService.deleteSubscription(response.body.data._id);
-        }
+        expect(response.body.message).toEqual('Followed Successfully');
       });
   });
 });

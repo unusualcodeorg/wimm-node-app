@@ -96,4 +96,8 @@ export class BookmarkService {
       .lean()
       .exec();
   }
+
+  async deleteUserBookmarks(user: User) {
+    return this.bookmarkModel.deleteMany({ user: user }).lean().exec();
+  }
 }
