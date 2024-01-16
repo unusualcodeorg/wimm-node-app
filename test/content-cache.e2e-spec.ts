@@ -14,6 +14,7 @@ import { ContentService } from '../src/content/content.service';
 import { CreateContentDto } from '../src/content/dto/create-content.dto';
 import { Category } from '../src/content/schemas/content.schema';
 import { ContentInfoDto } from '../src/content/dto/content-info.dto';
+import { CacheService } from '../src/cache/cache.service';
 
 describe('Content Controller - Cache (e2e)', () => {
   let app: INestApplication;
@@ -21,6 +22,7 @@ describe('Content Controller - Cache (e2e)', () => {
   let userService: UserService;
   let authService: AuthService;
   let contentService: ContentService;
+  let cacheService: CacheService;
 
   let userAuthDto: UserAuthDto;
   let apiKey: ApiKey;
@@ -35,6 +37,7 @@ describe('Content Controller - Cache (e2e)', () => {
     userService = module.get(UserService);
     authService = module.get(AuthService);
     contentService = module.get(ContentService);
+    cacheService = module.get(CacheService);
 
     app = module.createNestApplication();
 
@@ -113,6 +116,8 @@ describe('Content Controller - Cache (e2e)', () => {
           expect(response.body.data).not.toBeNull();
           expect(response.body.data).toEqual(data);
         });
+      const cached = await cacheService.getValue(`/content/id/${data._id}`);
+      expect(cached).toEqual(data);
     } finally {
       await contentService.deleteFromDb(content);
     }
