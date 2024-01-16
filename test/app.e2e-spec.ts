@@ -1,27 +1,35 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { Connection } from 'mongoose';
+import { getConnectionToken } from '@nestjs/mongoose';
+import { CacheService } from '../src/cache/cache.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let connection: Connection;
+  let cacheService: CacheService;
 
   beforeEach(async () => {
-    const module = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    if (app) await app.close();
+    connection = await module.get(getConnectionToken());
+    cacheService = module.get<CacheService>(CacheService);
     app = module.createNestApplication();
     await app.init();
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
+    await cacheService.getStore().client.disconnect();
+    await connection.close();
     await app.close();
   });
 
-  it('/ (GET)', async () => {
-    await request(app.getHttpServer())
+  it('/GET', () => {
+    return request(app.getHttpServer())
       .get('/')
       .expect(404)
       .expect(/Cannot GET/);
