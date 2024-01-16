@@ -10,9 +10,6 @@ export type SubscriptionDocument = HydratedDocument<Subscription>;
 export class Subscription {
   readonly _id: Types.ObjectId;
 
-  @Prop({ required: true })
-  type: string;
-
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: User.name,

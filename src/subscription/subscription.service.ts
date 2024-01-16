@@ -239,4 +239,8 @@ export class SubscriptionService {
     });
     return subscription !== null;
   }
+
+  async deleteSubscription(id: Types.ObjectId) {
+    return this.subscriptionModel.findByIdAndDelete(id).lean().exec();
+  }
 }

@@ -23,4 +23,8 @@ export class SubscriptionDto {
     ),
   )
   readonly topicIds: Types.ObjectId[] | undefined;
+
+  constructor(props: SubscriptionDto) {
+    Object.assign(this, props);
+  }
 }

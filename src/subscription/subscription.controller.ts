@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
   NotFoundException,
   Param,
   Post,
@@ -18,6 +19,7 @@ import { Types } from 'mongoose';
 import { Category } from '../content/schemas/content.schema';
 import { SubscriptionInfoDto } from './dto/subscription-info.dto';
 import { PaginationDto } from '../common/pagination.dto';
+import { SubscriptionResultDto } from './dto/subscription-result.dto';
 
 @Controller('subscription')
 export class SubscriptionController {
@@ -27,26 +29,34 @@ export class SubscriptionController {
   async subscribe(
     @Request() request: ProtectedRequest,
     @Body() subscriptionDto: SubscriptionDto,
-  ) {
-    await this.subscriptionService.processSubscription(
+  ): Promise<SubscriptionResultDto> {
+    const subscription = await this.subscriptionService.processSubscription(
       request.user,
       subscriptionDto,
       'SUBSCRIBE',
     );
-    return 'Followed Successfully';
+    if (!subscription) throw new InternalServerErrorException();
+    return new SubscriptionResultDto({
+      _id: subscription._id,
+      result: 'Followed Successfully',
+    });
   }
 
   @Post('unsubscribe')
   async unsubscribe(
     @Request() request: ProtectedRequest,
     @Body() subscriptionDto: SubscriptionDto,
-  ) {
-    await this.subscriptionService.processSubscription(
+  ): Promise<SubscriptionResultDto> {
+    const subscription = await this.subscriptionService.processSubscription(
       request.user,
       subscriptionDto,
       'UNSUBSCRIBE',
     );
-    return 'Unfollowed Successfully';
+    if (!subscription) throw new InternalServerErrorException();
+    return new SubscriptionResultDto({
+      _id: subscription._id,
+      result: 'Unfollowed Successfully',
+    });
   }
 
   @Get('mentors')
