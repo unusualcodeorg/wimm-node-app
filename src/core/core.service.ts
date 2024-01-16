@@ -12,4 +12,13 @@ export class CoreService {
   async findApiKey(key: string): Promise<ApiKey | null> {
     return this.apikeyModel.findOne({ key: key, status: true }).lean().exec();
   }
+
+  async createApiKey(apikey: Partial<ApiKey>): Promise<ApiKey> {
+    const created = await this.apikeyModel.create(apikey);
+    return created.toObject();
+  }
+
+  async deleteApiKey(apikey: ApiKey) {
+    return this.apikeyModel.findByIdAndDelete(apikey._id).lean().exec();
+  }
 }

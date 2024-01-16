@@ -19,7 +19,7 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
-  it('/GET', () => {
+  it('should throw 404 when the endpoint is not defined', () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(404)
