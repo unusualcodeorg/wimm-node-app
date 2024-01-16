@@ -15,7 +15,7 @@ export class CacheService {
     await this.cache.set(key, value);
   }
 
-  getStore(): RedisStore {
-    return this.cache.store as RedisStore;
+  onModuleDestroy() {
+    (this.cache.store as RedisStore).client.disconnect();
   }
 }
