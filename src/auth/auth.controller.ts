@@ -15,6 +15,7 @@ import { ProtectedRequest } from '../core/http/request';
 import { TokenRefreshDto } from './dto/token-refresh.dto';
 import { UserAuthDto } from './dto/user-auth.dto';
 import { UserTokensDto } from './dto/user-tokens.dto';
+import { SignUpBasicDto } from './dto/signup-basic.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,9 +23,21 @@ export class AuthController {
 
   @Public()
   @HttpCode(HttpStatus.OK)
+  @Post('signup/basic')
+  async signUpBasic(
+    @Body() signUpBasicDto: SignUpBasicDto,
+  ): Promise<UserAuthDto> {
+    const { user, tokens } = await this.authService.signUpBasic(signUpBasicDto);
+    return new UserAuthDto(user, tokens);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
   @Post('login/basic')
-  async signIn(@Body() signInBasicDto: SignInBasicDto): Promise<UserAuthDto> {
-    const { user, tokens } = await this.authService.signIn(signInBasicDto);
+  async signInBasic(
+    @Body() signInBasicDto: SignInBasicDto,
+  ): Promise<UserAuthDto> {
+    const { user, tokens } = await this.authService.signInBasic(signInBasicDto);
     return new UserAuthDto(user, tokens);
   }
 
