@@ -19,7 +19,7 @@ import { CreateTopicDto } from '../src/topic/dto/create-topic.dto';
 import { CreateMentorDto } from '../src/mentor/dto/create-mentor.dto';
 import { Category } from '../src/content/schemas/content.schema';
 
-describe('Search Controller - AUTH (e2e)', () => {
+describe('Search Controller - (e2e)', () => {
   let app: INestApplication;
   let coreService: CoreService;
   let userService: UserService;
