@@ -74,6 +74,10 @@ export class AuthService {
     this.removeKeystore(keystore._id);
   }
 
+  async signOutFromEverywhere(user: User) {
+    return this.keystoreModel.deleteMany({ client: user }).lean().exec();
+  }
+
   async refreshToken(
     tokenRefreshDto: TokenRefreshDto,
     accessToken: string,

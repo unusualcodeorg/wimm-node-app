@@ -100,6 +100,7 @@ describe('Subscription Controller - (e2e)', () => {
     await userService.delete(userAuthDto.user as User);
     await topicService.deleteFromDb(topic);
     await mentorService.deleteFromDb(mentor);
+    await authService.signOutFromEverywhere(userAuthDto.user as User);
     await app.close();
   });
 

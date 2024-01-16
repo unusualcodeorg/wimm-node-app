@@ -91,6 +91,7 @@ describe('AppController - AUTH (e2e)', () => {
         });
     } finally {
       await userService.delete(signUp.user);
+      await authService.signOutFromEverywhere(signUp.user);
     }
   });
 });

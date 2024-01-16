@@ -72,6 +72,7 @@ describe('Search Controller - (e2e)', () => {
     await coreService.deleteApiKey(apiKey);
     await authService.deleteRole(role);
     await userService.delete(userAuthDto.user as User);
+    await authService.signOutFromEverywhere(userAuthDto.user as User);
     await app.close();
   });
 
