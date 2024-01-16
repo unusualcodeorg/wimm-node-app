@@ -14,6 +14,11 @@ export class UserService {
   readonly USER_CRITICAL_DETAIL =
     '+email +password +roles +googleId +facebookId';
 
+  async create(user: Omit<User, '_id' | 'status'>): Promise<User> {
+    const created = await this.userModel.create(user);
+    return { ...created.toObject(), roles: user.roles };
+  }
+
   async updateProfile(user: User, updateProfileDto: UpdateProfileDto) {
     const something =
       updateProfileDto.name &&
@@ -80,5 +85,13 @@ export class UserService {
       })
       .lean()
       .exec();
+  }
+
+  async delete(user: User): Promise<User | null> {
+    return this.userModel.findByIdAndUpdate(user._id);
+  }
+
+  async deactivate(user: User): Promise<User | null> {
+    return this.userModel.findByIdAndUpdate(user._id, { status: false });
   }
 }

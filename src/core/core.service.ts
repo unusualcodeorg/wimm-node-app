@@ -13,7 +13,7 @@ export class CoreService {
     return this.apikeyModel.findOne({ key: key, status: true }).lean().exec();
   }
 
-  async createApiKey(apikey: Partial<ApiKey>): Promise<ApiKey> {
+  async createApiKey(apikey: Omit<ApiKey, '_id' | 'status'>): Promise<ApiKey> {
     const created = await this.apikeyModel.create(apikey);
     return created.toObject();
   }

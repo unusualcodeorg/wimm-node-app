@@ -19,17 +19,42 @@ import { compare } from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { TokenRefreshDto } from './dto/token-refresh.dto';
 import { UserTokensDto } from './dto/user-tokens.dto';
+import { SignUpBasicDto } from './dto/signup-basic.dto';
+import { Role, RoleCode } from './schemas/role.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Keystore.name) private readonly keystoreModel: Model<Keystore>,
+    @InjectModel(Role.name) private readonly roleModel: Model<Role>,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
   ) {}
 
-  async signIn(
+  async signUpBasic(
+    signUpBasicDto: SignUpBasicDto,
+  ): Promise<{ user: User; tokens: UserTokensDto }> {
+    const user = await this.userService.findByEmail(signUpBasicDto.email);
+    if (user) throw new BadRequestException('User already exists');
+
+    const role = await this.findRole(RoleCode.VIEWER);
+    if (!role) throw new InternalServerErrorException();
+
+    const createdUser = await this.userService.create({
+      ...signUpBasicDto,
+      roles: [role],
+      verified: false,
+    });
+
+    if (!createdUser) throw new InternalServerErrorException();
+
+    const tokens = await this.createTokens(createdUser);
+
+    return { user: createdUser, tokens: tokens };
+  }
+
+  async signInBasic(
     signInBasicDto: SignInBasicDto,
   ): Promise<{ user: User; tokens: UserTokensDto }> {
     const user = await this.userService.findByEmail(signInBasicDto.email);
@@ -181,6 +206,16 @@ export class AuthService {
         client: client,
         primaryKey: primaryKey,
         secondaryKey: secondaryKey,
+        status: true,
+      })
+      .lean()
+      .exec();
+  }
+
+  private async findRole(roleCode: RoleCode): Promise<Role | null> {
+    return this.roleModel
+      .findOne({
+        code: roleCode,
         status: true,
       })
       .lean()
