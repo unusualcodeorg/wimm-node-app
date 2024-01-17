@@ -21,11 +21,11 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 import { FilesService } from './files.service';
 
-@Controller('files')
+@Controller()
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
-  @Get('image/:image')
+  @Get('assets/image/:image')
   async getImageFile(@Param('image') image: string, @Res() response: Response) {
     const diskPath = this.filesService.getDiskPath();
     const filepath = join(diskPath, image);
@@ -41,7 +41,7 @@ export class FilesController {
 
   @Roles([RoleCode.ADMIN])
   @UseInterceptors(FileInterceptor('image'))
-  @Post('upload/image')
+  @Post('assets/upload/image')
   async uploadImageFile(
     @Request() request: ProtectedRequest,
     @UploadedFile(
@@ -55,6 +55,6 @@ export class FilesController {
     file: Express.Multer.File,
   ) {
     const baseUrl = request.protocol + '://' + request.get('host');
-    return `${baseUrl}/files/image/${file.filename}`;
+    return `${baseUrl}/assets/image/${file.filename}`;
   }
 }
