@@ -67,7 +67,9 @@ describe('AppController - AUTH (e2e)', () => {
       .set('Authorization', 'Bearer wrong_access_token')
       .expect(401)
       .expect((response) => {
-        expect(response.body.statusCode).toEqual(StatusCode.FAILURE);
+        expect(response.body.statusCode).toEqual(
+          StatusCode.INVALID_ACCESS_TOKEN,
+        );
         expect(response.body.message).toEqual('Invalid Access Token');
       });
   });
