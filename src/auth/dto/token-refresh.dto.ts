@@ -1,6 +1,6 @@
 import { MaxLength } from 'class-validator';
 
 export class TokenRefreshDto {
-  @MaxLength(1000)
+  @MaxLength(2000)
   refreshToken: string;
 }
