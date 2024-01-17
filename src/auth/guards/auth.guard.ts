@@ -41,7 +41,7 @@ export class AuthGuard implements CanActivate {
     if (!user) throw new UnauthorizedException('User not registered');
 
     const keystore = await this.authService.findKeystore(user, payload.prm);
-    if (!keystore) throw new UnauthorizedException('Invalid access token');
+    if (!keystore) throw new UnauthorizedException('Invalid Access Token');
 
     request.user = user;
     request.keystore = keystore;

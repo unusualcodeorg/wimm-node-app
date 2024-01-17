@@ -7,6 +7,7 @@ import {
   BadRequestException,
   HttpStatus,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { TokenExpiredError } from '@nestjs/jwt';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
@@ -71,6 +72,22 @@ describe('ExpectionHandler', () => {
       'instruction',
       'refresh_token',
     );
+    expect(exceptionHandler['logger'].error).not.toHaveBeenCalled();
+  });
+
+  it('should set logout instruction data on invalid access token UnauthorizedException', () => {
+    const exception = new UnauthorizedException('Invalid Access Token');
+    exceptionHandler.catch(exception, hostMock);
+
+    expect(mockSetStatus).toHaveBeenCalledWith(HttpStatus.UNAUTHORIZED);
+
+    expect(mockSetJson).toHaveBeenCalledWith({
+      statusCode: StatusCode.INVALID_ACCESS_TOKEN,
+      message: 'Invalid Access Token',
+      url: 'test',
+    });
+
+    expect(mockAppendHeader).toHaveBeenCalledWith('instruction', 'logout');
     expect(exceptionHandler['logger'].error).not.toHaveBeenCalled();
   });
 

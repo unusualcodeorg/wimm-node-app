@@ -105,7 +105,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid Refresh Token');
 
     if (accessTokenPayload.sub !== refreshTokenPayload.sub)
-      throw new UnauthorizedException('Invalid access token');
+      throw new UnauthorizedException('Invalid Access Token');
 
     const keystore = await this.findTokensKeystore(
       user,

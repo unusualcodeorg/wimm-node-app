@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { TokenExpiredError } from '@nestjs/jwt';
 import { Request, Response } from 'express';
@@ -47,6 +48,13 @@ export class ExpectionHandler implements ExceptionFilter {
       }
       if (exception instanceof InternalServerErrorException) {
         this.logger.error(exception.message, exception.stack);
+      }
+
+      if (exception instanceof UnauthorizedException) {
+        if (message.toLowerCase().includes('invalid access token')) {
+          statusCode = StatusCode.INVALID_ACCESS_TOKEN;
+          response.appendHeader('instruction', 'logout');
+        }
       }
     } else if (exception instanceof TokenExpiredError) {
       status = HttpStatus.UNAUTHORIZED;
