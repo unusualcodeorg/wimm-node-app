@@ -9,6 +9,7 @@ import { ExpectionHandler } from './interceptors/exception.handler';
 import { ResponseValidation } from './interceptors/response.validations';
 import { ConfigModule } from '@nestjs/config';
 import { WinstonLogger } from '../setup/winston.logger';
+import { CoreController } from './core.controller';
 
 @Module({
   imports: [
@@ -31,5 +32,6 @@ import { WinstonLogger } from '../setup/winston.logger';
     CoreService,
     WinstonLogger,
   ],
+  controllers: [CoreController],
 })
 export class CoreModule {}

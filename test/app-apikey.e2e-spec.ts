@@ -103,4 +103,27 @@ describe('AppController - API KEY (e2e)', () => {
       await coreService.deleteApiKey(apiKey);
     }
   });
+
+  it('should send 200 when correct x-api-key is provided for heartbeat', async () => {
+    const apiKey = await coreService.createApiKey({
+      key: 'test_api_key_3',
+      version: 1,
+      permissions: [Permission.GENERAL],
+      comments: ['For testing'],
+    });
+
+    try {
+      await request(app.getHttpServer())
+        .get('/heartbeat')
+        .set('Content-Type', 'application/json')
+        .set('x-api-key', apiKey.key)
+        .expect(200)
+        .expect((response) => {
+          expect(response.body.statusCode).toEqual(StatusCode.SUCCESS);
+          expect(response.body.message).toEqual('alive');
+        });
+    } finally {
+      await coreService.deleteApiKey(apiKey);
+    }
+  });
 });
