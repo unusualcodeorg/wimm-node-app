@@ -92,7 +92,7 @@ export class SubscriptionService {
       }
     }
 
-    if (!modified) return null;
+    if (!modified) return subscription;
 
     return await this.update(subscription);
   }
