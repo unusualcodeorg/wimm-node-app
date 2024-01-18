@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { Bookmark, BookmarkSchema } from './schemas/bookmark.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BookmarkController } from './bookmark.controller';
@@ -10,7 +10,7 @@ import { ContentModule } from '../content/content.module';
     MongooseModule.forFeature([
       { name: Bookmark.name, schema: BookmarkSchema },
     ]),
-    ContentModule,
+    forwardRef(() => ContentModule),
   ],
   controllers: [BookmarkController],
   providers: [BookmarkService],

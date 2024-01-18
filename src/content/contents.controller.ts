@@ -53,4 +53,15 @@ export class ContentsController {
       paginationRotatedDto,
     );
   }
+
+  @Get('my/box')
+  async findMyBoxContents(
+    @Query() paginationDto: PaginationDto,
+    @Request() request: ProtectedRequest,
+  ): Promise<ContentInfoDto[]> {
+    return await this.contentsService.myboxContents(
+      request.user,
+      paginationDto,
+    );
+  }
 }

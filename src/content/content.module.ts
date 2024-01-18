@@ -11,6 +11,7 @@ import { ContentsController } from './contents.controller';
 import { ContentsService } from './contents.service';
 import { SubscriptionModule } from '../subscription/subscription.module';
 import { RedisCacheModule } from '../cache/redis-cache.module';
+import { BookmarkModule } from '../bookmark/bookmark.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { RedisCacheModule } from '../cache/redis-cache.module';
     MentorModule,
     SubscriptionModule,
     RedisCacheModule,
+    BookmarkModule,
   ],
   controllers: [
     ContentController,

@@ -13,6 +13,8 @@ import { ContentService } from './content.service';
 import { ContentInfoDto } from './dto/content-info.dto';
 import { SubscriptionService } from '../subscription/subscription.service';
 import { PaginationRotatedDto } from './dto/pagination-rotated.dto';
+import { BookmarkService } from '../bookmark/bookmark.service';
+import { Bookmark } from '../bookmark/schemas/bookmark.schema';
 
 @Injectable()
 export class ContentsService {
@@ -22,6 +24,7 @@ export class ContentsService {
     private readonly topicService: TopicService,
     private readonly mentorService: MentorService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly bookmarkService: BookmarkService,
   ) {}
 
   async findRotatedContents(
@@ -224,6 +227,19 @@ export class ContentsService {
       .exec();
   }
 
+  async myboxContents(
+    user: User,
+    paginationDto: PaginationDto,
+  ): Promise<ContentInfoDto[]> {
+    const bookmarks = await this.bookmarkService.findBookmarks(user);
+    const contents = await this.findUserBoxContentPaginated(
+      user,
+      bookmarks,
+      paginationDto,
+    );
+    return contents.map((content) => new ContentInfoDto(content));
+  }
+
   async searchLike(query: string, limit: number): Promise<Content[]> {
     return this.contentModel
       .find({
@@ -325,7 +341,7 @@ export class ContentsService {
 
   async findUserBoxContentPaginated(
     user: User,
-    bookmarkedContentIds: Types.ObjectId[],
+    bookmarks: Bookmark[],
     paginationDto: PaginationDto,
   ): Promise<Content[]> {
     return this.contentModel
@@ -335,7 +351,7 @@ export class ContentsService {
         {
           $or: [
             { createdBy: user._id },
-            { _id: { $in: bookmarkedContentIds } },
+            { _id: { $in: bookmarks.map((b) => b._id) } },
           ],
         },
       ])
