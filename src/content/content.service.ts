@@ -199,6 +199,8 @@ export class ContentService {
     const content = await this.findById(id);
     if (!content) throw new NotFoundException('Content Not Found');
 
+    if (!content.likes) content.likes = 0; // fix for older data
+
     const likedContent = await this.findUserAndContentLike(user, content);
 
     if (!likedContent) {
@@ -217,6 +219,8 @@ export class ContentService {
   async removeLike(id: Types.ObjectId, user: User): Promise<boolean> {
     const content = await this.findById(id);
     if (!content) throw new NotFoundException('Content Not Found');
+
+    if (!content.likes) content.likes = 0; // fix for older data
 
     const likedContent = await this.findUserAndContentLike(user, content);
 
