@@ -18,7 +18,7 @@ export class CreateContentDto {
   category: Category;
 
   @MinLength(3)
-  @MaxLength(300)
+  @MaxLength(500)
   readonly title: string;
 
   @MinLength(3)

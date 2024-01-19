@@ -24,7 +24,7 @@ export class Content {
   @Prop({ required: true, enum: Object.values(Category) })
   category: Category;
 
-  @Prop({ required: true, maxlength: 300, trim: true })
+  @Prop({ required: true, maxlength: 500, trim: true })
   title: string;
 
   @Prop({ required: true, maxlength: 100, trim: true })

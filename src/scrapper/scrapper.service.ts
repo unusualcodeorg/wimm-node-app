@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { Category as ContentCategory } from '../content/schemas/content.schema';
-import { MetaContentEntity } from './dto/meta-content.dto';
+import { MetaContentDto } from './dto/meta-content.dto';
 
 @Injectable()
 export class ScrapperService {
@@ -10,30 +10,31 @@ export class ScrapperService {
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
 
-    const title = $('title').text();
-    const description = $('meta[name="description"]').attr('content') || '';
-    const author = $('meta[name="author"]').attr('content') || '';
-    const thumbnail = $('meta[property="og:image"]').attr('content') || '';
-    const publisher = $('meta[property="og:site_name"]').attr('content') || '';
+    const website = new URL(url).hostname;
 
-    const data: MetaContentEntity = new MetaContentEntity({
-      category: ContentCategory.ARTICLE,
-      title: title,
-      subtitle: author,
-      description: description,
-      thumbnail: thumbnail,
-      extra: url,
-    });
+    const title = $('title').text();
+    const description = $('meta[name="description"]').attr('content');
+    const author = $('meta[name="author"]').attr('content');
+    const thumbnail = $('meta[property="og:image"]').attr('content');
+    const publisher = $('meta[property="og:site_name"]').attr('content');
+
+    let category = ContentCategory.ARTICLE;
 
     if (
       url.includes('https://youtu.be') ||
       url.includes('https://www.youtube.com/watch')
     ) {
-      data.category = ContentCategory.YOUTUBE;
+      category = ContentCategory.YOUTUBE;
     }
 
-    if (!data.subtitle) data.subtitle = publisher;
-    if (!data.subtitle) data.subtitle = '';
+    const data: MetaContentDto = new MetaContentDto({
+      category: category,
+      title: title,
+      subtitle: author ? author : publisher ? publisher : website,
+      description: description ? description : title,
+      thumbnail: thumbnail ? thumbnail : 'http://localhost/dummy.png',
+      extra: url,
+    });
 
     return data;
   }
