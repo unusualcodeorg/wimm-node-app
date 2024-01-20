@@ -20,10 +20,7 @@ export class ScrapperService {
 
     let category = ContentCategory.ARTICLE;
 
-    if (
-      url.includes('https://youtu.be') ||
-      url.includes('https://www.youtube.com/watch')
-    ) {
+    if (website.includes('youtu.be') || website.includes('youtube')) {
       category = ContentCategory.YOUTUBE;
     }
 
