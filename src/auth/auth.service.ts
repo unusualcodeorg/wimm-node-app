@@ -15,7 +15,7 @@ import { User } from '../user/schemas/user.schema';
 import { SignInBasicDto } from './dto/signin-basic.dto';
 import { ConfigService } from '@nestjs/config';
 import { TokenConfig, TokenConfigName } from '../config/token.config';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { TokenRefreshDto } from './dto/token-refresh.dto';
 import { UserTokensDto } from './dto/user-tokens.dto';
@@ -41,8 +41,11 @@ export class AuthService {
     const role = await this.findRole(RoleCode.VIEWER);
     if (!role) throw new InternalServerErrorException();
 
+    const password = await hash(signUpBasicDto.password, 5);
+
     const createdUser = await this.userService.create({
       ...signUpBasicDto,
+      password: password,
       roles: [role],
       verified: false,
     });
