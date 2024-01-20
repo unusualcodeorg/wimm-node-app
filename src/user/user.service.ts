@@ -21,9 +21,9 @@ export class UserService {
 
   async updateProfile(user: User, updateProfileDto: UpdateProfileDto) {
     const something =
-      updateProfileDto.name &&
-      updateProfileDto.profilePicUrl &&
-      updateProfileDto.tagline &&
+      updateProfileDto.name ||
+      updateProfileDto.profilePicUrl ||
+      updateProfileDto.tagline ||
       updateProfileDto.firebaseToken;
 
     if (!something) return new UserDto(user);
