@@ -27,7 +27,7 @@ export class User {
   password?: string;
 
   @Prop({ select: false, trim: true, maxlength: 2000 })
-  firebaseFcmToken?: string;
+  firebaseToken?: string;
 
   @Prop({ select: false, trim: true, maxlength: 200 })
   googleId?: string;

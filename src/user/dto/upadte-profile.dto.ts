@@ -11,6 +11,10 @@ export class UpdateProfileDto {
   readonly profilePicUrl?: string;
 
   @IsOptional()
+  @MaxLength(2000)
+  readonly firebaseToken?: string;
+
+  @IsOptional()
   @MaxLength(500)
   readonly tagline?: string;
 }
