@@ -23,7 +23,8 @@ export class UserService {
     const something =
       updateProfileDto.name &&
       updateProfileDto.profilePicUrl &&
-      updateProfileDto.tagline;
+      updateProfileDto.tagline &&
+      updateProfileDto.firebaseToken;
 
     if (!something) return new UserDto(user);
 
