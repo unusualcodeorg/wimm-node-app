@@ -80,7 +80,7 @@ export class ContentsService {
     contentId: Types.ObjectId,
     paginationDto: PaginationDto,
   ): Promise<ContentInfoDto[]> {
-    const content = await this.contentService.findPublicInfoById(contentId);
+    const content = await this.contentService.findInfoById(user, contentId);
     if (!content) throw new NotFoundException('Content Not Found');
 
     const contents = await this.searchSimilar(

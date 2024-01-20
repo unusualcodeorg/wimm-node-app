@@ -157,7 +157,7 @@ export class ContentService {
   }
 
   async findOne(id: Types.ObjectId, user: User): Promise<ContentInfoDto> {
-    const content = await this.findPublicInfoById(id);
+    const content = await this.findInfoById(user, id);
     if (!content) throw new NotFoundException('Content Not Found');
 
     const likedContent = await this.findUserAndContentLike(user, content);
@@ -286,13 +286,15 @@ export class ContentService {
       .exec();
   }
 
-  async findPublicInfoById(id: Types.ObjectId): Promise<Content | null> {
+  async findInfoById(user: User, id: Types.ObjectId): Promise<Content | null> {
     return this.contentModel
-      .findOne({
-        _id: id,
-        status: true,
-        private: { $ne: true },
-      })
+      .findOne()
+      .and([
+        { _id: id, status: true },
+        {
+          $or: [{ createdBy: user._id }, { private: { $ne: true } }],
+        },
+      ])
       .select('-status -private')
       .populate({
         path: 'createdBy',
