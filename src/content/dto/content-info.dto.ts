@@ -60,6 +60,10 @@ export class ContentInfoDto {
 
   @IsOptional()
   @IsBoolean()
+  submit?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   private?: boolean;
 
   @ValidateNested()
@@ -78,6 +82,7 @@ export class ContentInfoDto {
       'likes',
       'views',
       'shares',
+      'submit',
       'private',
       'score',
     ]);

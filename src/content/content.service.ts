@@ -156,6 +156,21 @@ export class ContentService {
     });
   }
 
+  async unpublishContent(
+    admin: User,
+    id: Types.ObjectId,
+  ): Promise<Content | null> {
+    const content = await this.findById(id);
+    if (!content) throw new NotFoundException('Content Not Found');
+
+    return await this.update({
+      _id: content._id,
+      general: false,
+      private: true,
+      updatedBy: admin,
+    });
+  }
+
   async findOne(id: Types.ObjectId, user: User): Promise<ContentInfoDto> {
     const content = await this.findInfoById(user, id);
     if (!content) throw new NotFoundException('Content Not Found');

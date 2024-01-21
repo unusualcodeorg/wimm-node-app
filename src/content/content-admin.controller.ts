@@ -82,4 +82,18 @@ export class ContentAdminController {
     if (!content) throw new InternalServerErrorException('Not able to publish');
     return 'Content published successfully';
   }
+
+  @Put('unpublish/general')
+  async unpublish(
+    @Body() mongoIdDto: MongoIdDto,
+    @Request() request: ProtectedRequest,
+  ): Promise<string> {
+    const content = await this.contentService.unpublishContent(
+      request.user,
+      mongoIdDto.id,
+    );
+    if (!content)
+      throw new InternalServerErrorException('Not able to unpublish');
+    return 'Content publication removed';
+  }
 }
