@@ -105,6 +105,8 @@ describe('Content Controller - Cache (e2e)', () => {
       createdBy: createdBy,
     };
 
+    delete data.submit;
+
     try {
       await request(app.getHttpServer())
         .get(`/content/id/${data._id}`)
@@ -120,6 +122,7 @@ describe('Content Controller - Cache (e2e)', () => {
       const cached = await cacheService.getValue(`/content/id/${data._id}`);
       expect(cached).toEqual(data);
     } finally {
+      await cacheService.delete(`/content/id/${data._id}`);
       await contentService.deleteFromDb(content);
     }
   });

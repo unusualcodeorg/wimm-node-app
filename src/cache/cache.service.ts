@@ -15,6 +15,10 @@ export class CacheService {
     await this.cache.set(key, value);
   }
 
+  async delete(key: string): Promise<void> {
+    await this.cache.del(key);
+  }
+
   onModuleDestroy() {
     (this.cache.store as RedisStore).client.disconnect();
   }
