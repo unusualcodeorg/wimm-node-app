@@ -1,4 +1,4 @@
-# Code of Conduct for [Your Project Name] Backend
+# Code of Conduct for WhereIsMyMotivation Backend
 
 ## Introduction
 
