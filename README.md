@@ -2,7 +2,9 @@
 
 <!-- [![Docker Compose CI](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml) -->
 
-### This is a complete production ready project to learn modern techniques and approaches to build a performant and secure backend API services. It is designed for web apps, mobile apps, and other API services.
+![Request - Response: Design](.resources/documentations/assets/cover.jpg)
+
+This is a complete production ready project to learn modern techniques and approaches to build a performant and secure backend API services. It is designed for web apps, mobile apps, and other API services.
 
 ## Framework
 - Nest
@@ -74,13 +76,13 @@ Change the following hosts in the **.env** and **.env.test**
 - DB_HOST=localhost
 - REDIS_HOST=localhost
 
-### Best way to run is to use the vscode `Run and Debbug`
+Best way to run this project is to use the vscode `Run and Debug` button. Scripts are available for debugging and template generation on vscode.
 
 ```bash
 $ npm install
 ```
 
-## Running the app
+### Running the app
 
 ```bash
 # development
@@ -93,7 +95,7 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+### Test
 
 ```bash
 # unit tests
@@ -106,5 +108,10 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-### Find this project useful ? :heart:
+## Find this project useful ? :heart:
 * Support it by clicking the :star: button on the upper right of this page. :v:
+
+## More on YouTube channel - Unusual Code
+Subscribe to the YouTube channel UnusualCode for understanding the concepts used in this project:
+
+[![YouTube](https://img.shields.io/badge/YouTube-Subscribe-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@unusualcode)
