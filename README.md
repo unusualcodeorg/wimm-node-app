@@ -1,4 +1,4 @@
-# Moderm Backend Development - WhereIsMyMotivation
+# Modern Backend Development - WhereIsMyMotivation
 
 <!-- [![Docker Compose CI](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml) -->
 
@@ -117,6 +117,10 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## API DOC
+[![API Documentation](https://img.shields.io/badge/API%20Documentation-View%20Here-blue?style=for-the-badge)](https://documenter.getpostman.com/view/1552895/2s9YymH5MR)
+
 
 ## Find this project useful ? :heart:
 * Support it by clicking the :star: button on the upper right of this page. :v:
