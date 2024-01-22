@@ -1,4 +1,4 @@
-# Contributing to [Your Project Name] Backend
+# Contributing to WhereIsMyMotivation Backend
 
 Welcome to WhereIsMyMotivation Backend! We appreciate your interest in contributing. Whether you're reporting bugs, suggesting improvements, or contributing code, your collaboration makes this project better for everyone.
 
