@@ -45,9 +45,9 @@ Using this app can bring a little bit of happiness and energy to live an inspire
 ![Request - Response: Design](.resources/documentations/assets/api-structure.png)
 
 ## Request-Response Flow
-```text
+`
 src → main.ts → app-module.ts → core.module.ts → apikey.guard.ts → auth.module.ts → auth.guard.ts → role.guard.ts → [feature].module.ts → [feature].controller.ts → [feature].service.ts → response.validation.ts → exception.handler.ts → response.transformer.ts
-```
+`
 
 # Installation Instruction
 vscode is the recommended editor - dark theme 
@@ -129,3 +129,6 @@ $ npm run test:cov
 Subscribe to the YouTube channel `UnusualCode` for understanding the concepts used in this project:
 
 [![YouTube](https://img.shields.io/badge/YouTube-Subscribe-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@unusualcode)
+
+## Contribution
+Please feel free to fork it and open a PR.
