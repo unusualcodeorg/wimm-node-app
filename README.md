@@ -41,6 +41,12 @@ You can track your happiness level and write down daily journals. You can also s
 
 Using this app can bring a little bit of happiness and energy to live an inspired life.
 
+## Android App using this backend
+![Light](.resources/documentations/assets/display-light.png)
+
+The Android App using on this backend is also open-sourced. You can find the project here: 
+### [Modern Android Development - WhereIsMyMotivation](https://github.com/janishar/wimm-android-app)
+
 ## API Framework Design
 ![Request - Response: Design](.resources/documentations/assets/api-structure.png)
 
