@@ -44,8 +44,7 @@ Using this app can bring a little bit of happiness and energy to live an inspire
 ## Android App using this backend
 ![Screenshot-Light](.resources/documentations/assets/display-light.png)
 
-The Android App using on this backend is also open-sourced. You can find the project here: 
-### [Modern Android Development - WhereIsMyMotivation](https://github.com/janishar/wimm-android-app)
+The Android App using on this backend is also open-sourced. You can find the project here: [Modern Android Development - WhereIsMyMotivation](https://github.com/janishar/wimm-android-app)
 
 ## API Framework Design
 ![Request-Response-Design](.resources/documentations/assets/api-structure.png)
@@ -80,7 +79,7 @@ docker-compose up -d
 
 ### Run Tests
 ```bash
-docker exec -t app npm test`
+docker exec -t app npm test
 ```
 If having any issue
 - Make sure 3000 port is not occupied else change PORT in **.env** file.
