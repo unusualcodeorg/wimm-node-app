@@ -1,6 +1,6 @@
 # Modern Backend Development - WhereIsMyMotivation
 
-<!-- [![Docker Compose CI](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml) -->
+[![Docker Compose CI](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml)
 
 ![Cover](.resources/documentations/assets/cover.jpg)
 
@@ -30,12 +30,12 @@ This is a complete production ready project to learn modern techniques and appro
 - Clean and modular codebase
 
 ## Notes
-Few things are added to aid the learning process
+A few things are added to aid the learning process
 - disk submodule is added to provide images
 - database dump is added to seed the database
 
 # About Project
-WhereIsMyMotivation is a concept where you see videos and quotes that can inspire you everyday. You will get information on great personalities and make them your percieved mentors. You can also suscribe to topics of your interests. 
+WhereIsMyMotivation is a concept where you see videos and quotes that can inspire you everyday. You will get information on great personalities and make them your perceived mentors. You can also subscribe to topics of your interests. 
 
 You can track your happiness level and write down daily journals. You can also share things of interest from web to store in your motivation box.
 
@@ -44,7 +44,7 @@ Using this app can bring a little bit of happiness and energy to live an inspire
 ## Android App using this backend
 ![Screenshot-Light](.resources/documentations/assets/display-light.png)
 
-The Android App using on this backend is also open-sourced. You can find the project here: [Modern Android Development - WhereIsMyMotivation](https://github.com/janishar/wimm-android-app)
+The Android App using this backend is also open-sourced. You can find the project here: [Modern Android Development - WhereIsMyMotivation](https://github.com/janishar/wimm-android-app)
 
 ## API Framework Design
 ![Request-Response-Design](.resources/documentations/assets/api-structure.png)
