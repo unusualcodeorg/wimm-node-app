@@ -1,6 +1,20 @@
 version: '3.9'
 
 services:
+  tester:
+    # This defines the configuration options, including the context and dockerfile,
+    # that will be applied when Compose builds the application image.
+    build:
+      # This defines the build context for the image build — in this case, the current project directory.
+      context: .
+      # This specifies the Dockerfile in your current project directory as the file
+      dockerfile: Dockerfile.test
+    image: tester
+    container_name: tester
+    env_file: .env.test
+    depends_on:
+      - mongo
+      - redis
   app:
     # This defines the configuration options, including the context and dockerfile,
     # that will be applied when Compose builds the application image.
@@ -17,10 +31,7 @@ services:
     env_file: .env
     ports:
       # This maps port from .env on the host to same port number on the container.
-      - '$PORT:$PORT'
-    links:
-      - mongo
-      - redis
+      - '${PORT}:${PORT}'
     depends_on:
       - mongo
       - redis
@@ -38,11 +49,11 @@ services:
       # a root user in the admin authentication database and ensure that authentication is enabled
       # when the container starts. We have set MONGO_INITDB_ROOT_USERNAME and MONGO_INITDB_ROOT_PASSWORD
       # using the values from our .env file, which we pass to the db service using the env_file option.
-      - MONGO_INITDB_ROOT_USERNAME=$DB_ADMIN
-      - MONGO_INITDB_ROOT_PASSWORD=$DB_ADMIN_PWD
-      - MONGO_INITDB_DATABASE=$DB_NAME
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ADMIN}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ADMIN_PWD}
+      - MONGO_INITDB_DATABASE=${DB_NAME}
     ports:
-      - '$DB_PORT:27017'
+      - '${DB_PORT}:27017'
     command: mongod --bind_ip_all
     volumes:
       - ./.resources/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
@@ -58,8 +69,8 @@ services:
     restart: unless-stopped
     env_file: .env
     ports:
-      - '$REDIS_PORT:6379'
-    command: redis-server --bind localhost --bind 0.0.0.0 --save 20 1 --loglevel warning --requirepass $REDIS_PASSWORD
+      - '${REDIS_PORT}:6379'
+    command: redis-server --bind localhost --bind 0.0.0.0 --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
     volumes:
       - cache:/data/cache
 
