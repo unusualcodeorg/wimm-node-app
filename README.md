@@ -79,7 +79,7 @@ docker-compose up -d
 
 ### Run Tests
 ```bash
-docker exec -t app npm test
+docker exec -t tester npm run test:cov
 ```
 If having any issue
 - Make sure 3000 port is not occupied else change PORT in **.env** file.
