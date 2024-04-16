@@ -1,6 +1,6 @@
 # Modern Backend Development - WhereIsMyMotivation
 
-[![Docker Compose CI](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/janishar/wimm-node-app/actions/workflows/docker_compose.yml)
+[![Docker Compose CI](https://github.com/unusualcodeorg/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/unusualcodeorg/wimm-node-app/actions/workflows/docker_compose.yml)
 
 ![Cover](.resources/documentations/assets/cover.jpg)
 
@@ -44,7 +44,7 @@ Using this app can bring a little bit of happiness and energy to live an inspire
 ## Android App using this backend
 ![Screenshot-Light](.resources/documentations/assets/display-light.png)
 
-The Android App using this backend is also open-sourced. You can find the project here: [Modern Android Development - WhereIsMyMotivation](https://github.com/janishar/wimm-android-app)
+The Android App using this backend is also open-sourced. You can find the project here: [Modern Android Development - WhereIsMyMotivation](https://github.com/unusualcodeorg/wimm-android-app)
 
 ## API Framework Design
 ![Request-Response-Design](.resources/documentations/assets/api-structure.png)
@@ -60,7 +60,7 @@ vscode is the recommended editor - dark theme
 ### Get the repo 
 ```bash
 # clone repository recursively
-git clone https://github.com/janishar/wimm-node-app.git --recursive
+git clone https://github.com/unusualcodeorg/wimm-node-app.git --recursive
 ```
 
 ### Install libraries
@@ -129,7 +129,7 @@ $ npm run test:cov
 ## Minimalistic version of this project
 If you want to use plain Express.js to create the same project explore the Minimalistic version of this project
 
-[Minimalistic Backend Development - WhereIsMyMotivation](https://github.com/janishar/wimm-node-app-minimalistic)
+[Minimalistic Backend Development - WhereIsMyMotivation](https://github.com/unusualcodeorg/wimm-node-app-minimalistic)
 
 ## Find this project useful ? :heart:
 * Support it by clicking the :star: button on the upper right of this page. :v:
