@@ -1,13 +1,15 @@
-# Modern Backend Development - WhereIsMyMotivation
+# NestJS Backend Architecture Project
 
 [![Docker Compose CI](https://github.com/unusualcodeorg/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/unusualcodeorg/wimm-node-app/actions/workflows/docker_compose.yml)
+
+## WhereIsMyMotivation
 
 ![Cover](.resources/documentations/assets/cover.jpg)
 
 This is a complete production ready project to learn modern techniques and approaches to build a performant and secure backend API services. It is designed for web apps, mobile apps, and other API services.
 
 ## Framework
-- Nest
+- NestJS
 - Express Node
 - Typescript
 - Mongoose

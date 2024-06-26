@@ -27,4 +27,4 @@ export class Keystore {
 
 export const KeystoreSchema = SchemaFactory.createForClass(Keystore);
 
-KeystoreSchema.index({ code: 1, status: 1 });
+KeystoreSchema.index({ client: 1, primaryKey: 1, secondaryKey: 1, status: 1 });
