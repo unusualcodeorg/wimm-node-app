@@ -75,7 +75,7 @@ $ npm install
 
 ```bash
 # install and start docker containers
-docker-compose up -d
+docker-compose up --build
 ```
 -  You will be able to access the api from http://localhost:3000
 
