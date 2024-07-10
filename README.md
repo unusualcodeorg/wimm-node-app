@@ -48,13 +48,9 @@ Using this app can bring a little bit of happiness and energy to live an inspire
 
 The Android App using this backend is also open-sourced. You can find the project here: [Modern Android Development - WhereIsMyMotivation](https://github.com/unusualcodeorg/wimm-android-app)
 
-## API Framework Design
-![Request-Response-Design](.resources/documentations/assets/api-structure.png)
-
 ## Request-Response Flow
-`
-src → main.ts → app-module.ts → core.module.ts → apikey.guard.ts → auth.module.ts → auth.guard.ts → role.guard.ts → [feature].module.ts → [feature].controller.ts → [feature].service.ts → response.validation.ts → exception.handler.ts → response.transformer.ts
-`
+
+![Request-Response-Design](.resources/documentations/assets/request-flow.svg)
 
 # Installation Instruction
 vscode is the recommended editor - dark theme 
