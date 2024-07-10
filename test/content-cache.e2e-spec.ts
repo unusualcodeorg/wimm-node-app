@@ -3,8 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { StatusCode } from '../src/core/http/response';
-import { ApiKey, Permission } from '../src/core/schemas/apikey.schema';
-import { CoreService } from '../src/core/core.service';
+import { ApiKey, Permission } from '../src/auth/schemas/apikey.schema';
 import { UserService } from '../src/user/user.service';
 import { AuthService } from '../src/auth/auth.service';
 import { Role, RoleCode } from '../src/auth/schemas/role.schema';
@@ -18,7 +17,6 @@ import { CacheService } from '../src/cache/cache.service';
 
 describe('Content Controller - Cache (e2e)', () => {
   let app: INestApplication;
-  let coreService: CoreService;
   let userService: UserService;
   let authService: AuthService;
   let contentService: ContentService;
@@ -33,7 +31,6 @@ describe('Content Controller - Cache (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
-    coreService = module.get(CoreService);
     userService = module.get(UserService);
     authService = module.get(AuthService);
     contentService = module.get(ContentService);
@@ -41,7 +38,7 @@ describe('Content Controller - Cache (e2e)', () => {
 
     app = module.createNestApplication();
 
-    apiKey = await coreService.createApiKey({
+    apiKey = await authService.createApiKey({
       key: 'test_api_key',
       version: 1,
       permissions: [Permission.GENERAL],
@@ -63,7 +60,7 @@ describe('Content Controller - Cache (e2e)', () => {
   });
 
   afterEach(async () => {
-    await coreService.deleteApiKey(apiKey);
+    await authService.deleteApiKey(apiKey);
     await authService.deleteRole(role);
     await userService.delete(userAuthDto.user as User);
     await authService.signOutFromEverywhere(userAuthDto.user as User);

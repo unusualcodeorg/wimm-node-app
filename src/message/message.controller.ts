@@ -1,8 +1,8 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { Permissions } from '../core/decorators/permissions.decorator';
-import { Permission } from '../core/schemas/apikey.schema';
+import { Permissions } from '../auth/decorators/permissions.decorator';
+import { Permission } from '../auth/schemas/apikey.schema';
 import { ProtectedRequest } from '../core/http/request';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RoleCode } from '../auth/schemas/role.schema';

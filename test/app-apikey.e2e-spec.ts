@@ -3,19 +3,19 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { StatusCode } from '../src/core/http/response';
-import { Permission } from '../src/core/schemas/apikey.schema';
-import { CoreService } from '../src/core/core.service';
+import { Permission } from '../src/auth/schemas/apikey.schema';
+import { AuthService } from '../src/auth/auth.service';
 
 describe('AppController - API KEY (e2e)', () => {
   let app: INestApplication;
-  let coreService: CoreService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    coreService = module.get(CoreService);
+    authService = module.get(AuthService);
     app = module.createNestApplication();
 
     await app.init();
@@ -36,7 +36,7 @@ describe('AppController - API KEY (e2e)', () => {
   });
 
   it('should throw 403 when wrong x-api-key is provided', async () => {
-    const apiKey = await coreService.createApiKey({
+    const apiKey = await authService.createApiKey({
       key: 'test_api_key',
       version: 1,
       permissions: [Permission.GENERAL],
@@ -54,12 +54,12 @@ describe('AppController - API KEY (e2e)', () => {
           expect(response.body.message).toEqual('Forbidden');
         });
     } finally {
-      await coreService.deleteApiKey(apiKey);
+      await authService.deleteApiKey(apiKey);
     }
   });
 
   it('should throw 403 when x-api-key does not have right permissions', async () => {
-    const apiKey = await coreService.createApiKey({
+    const apiKey = await authService.createApiKey({
       key: 'test_api_key_1',
       version: 1,
       permissions: [Permission.XYZ_SERVICE],
@@ -77,12 +77,12 @@ describe('AppController - API KEY (e2e)', () => {
           expect(response.body.message).toEqual('Forbidden');
         });
     } finally {
-      await coreService.deleteApiKey(apiKey);
+      await authService.deleteApiKey(apiKey);
     }
   });
 
   it('should throw 401 when correct x-api-key is provided', async () => {
-    const apiKey = await coreService.createApiKey({
+    const apiKey = await authService.createApiKey({
       key: 'test_api_key_2',
       version: 1,
       permissions: [Permission.GENERAL],
@@ -100,12 +100,12 @@ describe('AppController - API KEY (e2e)', () => {
           expect(response.body.message).toEqual('Unauthorized');
         });
     } finally {
-      await coreService.deleteApiKey(apiKey);
+      await authService.deleteApiKey(apiKey);
     }
   });
 
   it('should send 200 when correct x-api-key is provided for heartbeat', async () => {
-    const apiKey = await coreService.createApiKey({
+    const apiKey = await authService.createApiKey({
       key: 'test_api_key_3',
       version: 1,
       permissions: [Permission.GENERAL],
@@ -123,7 +123,7 @@ describe('AppController - API KEY (e2e)', () => {
           expect(response.body.message).toEqual('alive');
         });
     } finally {
-      await coreService.deleteApiKey(apiKey);
+      await authService.deleteApiKey(apiKey);
     }
   });
 });

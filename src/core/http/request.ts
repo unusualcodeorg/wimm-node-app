@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { User } from '../../user/schemas/user.schema';
-import { ApiKey } from '../schemas/apikey.schema';
+import { ApiKey } from '../../auth/schemas/apikey.schema';
 import { Keystore } from '../../auth/schemas/keystore.schema';
 
 export interface PublicRequest extends Request {

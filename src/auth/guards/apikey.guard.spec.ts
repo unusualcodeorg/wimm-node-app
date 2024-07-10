@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiKeyGuard } from './apikey.guard';
-import { CoreService } from '../core.service';
 import { Reflector } from '@nestjs/core';
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { HeaderName } from '../http/header';
-import { ApiKey, Permission } from '../schemas/apikey.schema';
+import { ApiKey, Permission } from '../../auth/schemas/apikey.schema';
+import { AuthService } from '../auth.service';
+import { HeaderName } from '../../core/http/header';
 
 describe('ApiKeyGuard', () => {
   let apiKeyGuard: ApiKeyGuard;
@@ -30,7 +30,7 @@ describe('ApiKeyGuard', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApiKeyGuard,
-        { provide: CoreService, useValue: { findApiKey: findApiKeyMock } },
+        { provide: AuthService, useValue: { findApiKey: findApiKeyMock } },
         { provide: Reflector, useValue: { get: reflectorGetMock } },
       ],
     }).compile();

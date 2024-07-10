@@ -4,17 +4,17 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { HeaderName } from '../http/header';
-import { CoreService } from '../core.service';
+import { HeaderName } from '../../core/http/header';
 import { Reflector } from '@nestjs/core';
 import { Permissions } from '../decorators/permissions.decorator';
-import { PublicRequest } from '../http/request';
-import { Permission } from '../schemas/apikey.schema';
+import { PublicRequest } from '../../core/http/request';
+import { Permission } from '../../auth/schemas/apikey.schema';
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
   constructor(
-    private readonly coreService: CoreService,
+    private readonly authService: AuthService,
     private readonly reflector: Reflector,
   ) {}
 
@@ -29,7 +29,7 @@ export class ApiKeyGuard implements CanActivate {
     const key = request.headers[HeaderName.API_KEY]?.toString();
     if (!key) throw new ForbiddenException();
 
-    const apiKey = await this.coreService.findApiKey(key);
+    const apiKey = await this.authService.findApiKey(key);
     if (!apiKey) throw new ForbiddenException();
 
     request.apiKey = apiKey;

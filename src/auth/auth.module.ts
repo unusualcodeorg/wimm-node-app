@@ -11,6 +11,8 @@ import { Keystore, KeystoreSchema } from './schemas/keystore.schema';
 import { UserModule } from '../user/user.module';
 import { Role, RoleSchema } from './schemas/role.schema';
 import { RolesGuard } from './guards/roles.guard';
+import { ApiKeyGuard } from './guards/apikey.guard';
+import { ApiKey, ApiKeySchema } from './schemas/apikey.schema';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { RolesGuard } from './guards/roles.guard';
       imports: [ConfigModule],
       useClass: TokenFactory,
     }),
+    MongooseModule.forFeature([{ name: ApiKey.name, schema: ApiKeySchema }]),
     MongooseModule.forFeature([
       { name: Keystore.name, schema: KeystoreSchema },
     ]),
@@ -26,14 +29,9 @@ import { RolesGuard } from './guards/roles.guard';
     UserModule,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    { provide: APP_GUARD, useClass: ApiKeyGuard },
+    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
     AuthService,
   ],
   controllers: [AuthController],
