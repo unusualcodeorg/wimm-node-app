@@ -21,10 +21,12 @@ import { TokenRefreshDto } from './dto/token-refresh.dto';
 import { UserTokensDto } from './dto/user-tokens.dto';
 import { SignUpBasicDto } from './dto/signup-basic.dto';
 import { Role, RoleCode } from './schemas/role.schema';
+import { ApiKey } from './schemas/apikey.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectModel(ApiKey.name) private readonly apikeyModel: Model<ApiKey>,
     @InjectModel(Keystore.name) private readonly keystoreModel: Model<Keystore>,
     @InjectModel(Role.name) private readonly roleModel: Model<Role>,
     private readonly jwtService: JwtService,
@@ -257,5 +259,18 @@ export class AuthService {
 
   async deleteRole(role: Role) {
     return this.roleModel.findByIdAndDelete(role._id).lean().exec();
+  }
+
+  async findApiKey(key: string): Promise<ApiKey | null> {
+    return this.apikeyModel.findOne({ key: key, status: true }).lean().exec();
+  }
+
+  async createApiKey(apikey: Omit<ApiKey, '_id' | 'status'>): Promise<ApiKey> {
+    const created = await this.apikeyModel.create(apikey);
+    return created.toObject();
+  }
+
+  async deleteApiKey(apikey: ApiKey) {
+    return this.apikeyModel.findByIdAndDelete(apikey._id).lean().exec();
   }
 }
