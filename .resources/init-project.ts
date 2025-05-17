@@ -14,21 +14,21 @@ const envTest = join(__dirname, '../.env.test');
 const envTestExample = join(__dirname, '../.env.test.example');
 
 if (!existsSync(publicPem)) {
-  writeFileSync(publicPem, readFileSync(publicPemExample));
+  writeFileSync(publicPem, new Uint8Array(readFileSync(publicPemExample)));
   console.log('keys/public.pem created')
 }
 
 if (!existsSync(privatePem)) {
-  writeFileSync(privatePem, readFileSync(privatePemExample));
+  writeFileSync(privatePem, new Uint8Array(readFileSync(privatePemExample)));
   console.log('keys/private.pem created');
 }
 
 if (!existsSync(env)) {
-  writeFileSync(env, readFileSync(envExample));
+  writeFileSync(env, new Uint8Array(readFileSync(envExample)));
   console.log('.env created');
 }
 
 if (!existsSync(envTest)) {
-  writeFileSync(envTest, readFileSync(envTestExample));
+  writeFileSync(envTest, new Uint8Array(readFileSync(envTestExample)));
   console.log('.env.test created');
 }
