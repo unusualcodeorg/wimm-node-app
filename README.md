@@ -1,6 +1,6 @@
 # NestJS Backend Architecture Project
 
-[![Docker Compose CI](https://github.com/unusualcodeorg/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/unusualcodeorg/wimm-node-app/actions/workflows/docker_compose.yml)
+[![Docker Compose CI](https://github.com/fifocode/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/fifocode/wimm-node-app/actions/workflows/docker_compose.yml)
 
 ## WhereIsMyMotivation
 
@@ -49,7 +49,7 @@ Using this app can bring a little bit of happiness and energy to live an inspire
 ## Android App using this backend
 ![Screenshot-Light](.resources/documentations/assets/display-light.png)
 
-The Android App using this backend is also open-sourced. You can find the project here: [Modern Android Development - WhereIsMyMotivation](https://github.com/unusualcodeorg/wimm-android-app)
+The Android App using this backend is also open-sourced. You can find the project here: [Modern Android Development - WhereIsMyMotivation](https://github.com/fifocode/wimm-android-app)
 
 ## Request-Response Flow
 
@@ -61,7 +61,7 @@ vscode is the recommended editor - dark theme
 ### Get the repo 
 ```bash
 # clone repository recursively
-git clone https://github.com/unusualcodeorg/wimm-node-app.git --recursive
+git clone https://github.com/fifocode/wimm-apis.git --recursive
 ```
 
 ### Install libraries
@@ -80,7 +80,7 @@ docker-compose up --build
 
 ### Run Tests
 ```bash
-docker exec -t tester npm run test:cov
+docker exec -t wimm-apis-tester npm run test:cov
 ```
 If having any issue
 - Make sure 3000 port is not occupied else change PORT in **.env** file.
@@ -130,15 +130,15 @@ $ npm run test:cov
 ## Minimalistic version of this project
 If you want to use plain Express.js to create the same project explore the Minimalistic version of this project
 
-[Minimalistic Backend Development - WhereIsMyMotivation](https://github.com/unusualcodeorg/wimm-node-app-minimalistic)
+[Minimalistic Backend Development - WhereIsMyMotivation](https://github.com/fifocode/wimm-apis-minimalistic)
 
 ## Find this project useful ? :heart:
 * Support it by clicking the :star: button on the upper right of this page. :v:
 
-## More on YouTube channel - Unusual Code
-Subscribe to the YouTube channel `UnusualCode` for understanding the concepts used in this project:
+## More on YouTube channel - fifocode
+Subscribe to the YouTube channel `fifocode` for understanding the concepts used in this project:
 
-[![YouTube](https://img.shields.io/badge/YouTube-Subscribe-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@unusualcode)
+[![YouTube](https://img.shields.io/badge/YouTube-Subscribe-red?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@fifocode)
 
 ## Contribution
 Please feel free to fork it and open a PR.

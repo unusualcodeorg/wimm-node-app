@@ -1,13 +1,12 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { RedisStore } from './redis-cache';
 
 @Injectable()
 export class CacheService {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
 
-  async getValue(key: string): Promise<string | null | undefined> {
+  async getValue<T>(key: string): Promise<T | null> {
     return await this.cache.get(key);
   }
 
@@ -20,6 +19,6 @@ export class CacheService {
   }
 
   onModuleDestroy() {
-    (this.cache.store as RedisStore).client.disconnect();
+    this.cache.disconnect();
   }
 }

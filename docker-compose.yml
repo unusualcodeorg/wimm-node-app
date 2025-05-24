@@ -7,8 +7,8 @@ services:
       context: .
       # This specifies the Dockerfile in your current project directory as the file
       dockerfile: Dockerfile.test
-    image: tester
-    container_name: tester
+    image: wimm-apis-tester
+    container_name: wimm-apis-tester
     env_file: .env.test
     depends_on:
       - mongo
@@ -21,8 +21,8 @@ services:
       context: .
       # This specifies the Dockerfile in your current project directory as the file
       dockerfile: Dockerfile
-    image: app
-    container_name: app
+    image: wimm-apis-app
+    container_name: wimm-apis-app
     # This defines the restart policy. The default is no,
     # but we have set the container to restart unless it is stopped.
     restart: unless-stopped
@@ -36,8 +36,8 @@ services:
 
   mongo:
     # To create this service, Compose will pull the mongo
-    image: mongo:7.0.4
-    container_name: mongo
+    image: mongo:8.0.9
+    container_name: wimm-apis-mongo
     restart: unless-stopped
     # This tells Compose that we would like to add environment variables
     # from a file called .env, located in our build context.
@@ -62,8 +62,8 @@ services:
       - dbdata:/data/db
 
   redis:
-    image: redis:7.2.3
-    container_name: redis
+    image: redis:8.0.0
+    container_name: wimm-apis-redis
     restart: unless-stopped
     env_file: .env
     ports:

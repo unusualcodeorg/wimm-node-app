@@ -93,9 +93,11 @@ describe('Content Controller - Cache (e2e)', () => {
     delete contentInfoDto.description;
 
     const createdBy = {
-      ...contentInfoDto.createdBy,
       _id: contentInfoDto.createdBy._id.toHexString(),
+      name: contentInfoDto.createdBy.name,
+      profilePicUrl: contentInfoDto.createdBy.profilePicUrl,
     };
+    
     const data = {
       ...contentInfoDto,
       _id: contentInfoDto._id.toHexString(),
@@ -116,8 +118,10 @@ describe('Content Controller - Cache (e2e)', () => {
           expect(response.body.data).not.toBeNull();
           expect(response.body.data).toEqual(data);
         });
-      const cached = await cacheService.getValue(`/content/id/${data._id}`);
-      expect(cached).toEqual(data);
+      const cached = await cacheService.getValue<ContentInfoDto>(
+        `/content/id/${data._id}`,
+      );
+      expect(JSON.stringify(cached)).toEqual(JSON.stringify(data));
     } finally {
       await cacheService.delete(`/content/id/${data._id}`);
       await contentService.deleteFromDb(content);

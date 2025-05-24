@@ -1,4 +1,3 @@
-// response-validation.interceptor.ts
 import {
   Injectable,
   NestInterceptor,
@@ -15,19 +14,27 @@ export class ResponseValidation implements NestInterceptor {
   intercept(_: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data) => {
-        if (data instanceof Object) {
-          const errors = validateSync(data);
-          if (errors.length > 0) {
-            const messages = this.extractErrorMessages(errors);
-            throw new InternalServerErrorException([
-              'Response validation failed',
-              ...messages,
-            ]);
-          }
+        if (Array.isArray(data)) {
+          data.forEach((item) => {
+            if (item instanceof Object) this.validate(item);
+          });
+        } else if (data instanceof Object) {
+          this.validate(data);
         }
         return data;
       }),
     );
+  }
+
+  private validate(data: any) {
+    const errors = validateSync(data);
+    if (errors.length > 0) {
+      const messages = this.extractErrorMessages(errors);
+      throw new InternalServerErrorException([
+        'Response validation failed',
+        ...messages,
+      ]);
+    }
   }
 
   private extractErrorMessages(
