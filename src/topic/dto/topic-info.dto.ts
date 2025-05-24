@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 import { Types } from 'mongoose';
 import { IsMongoIdObject } from '../../common/mongo.validation';
 import { copy } from '../../common/copier';
@@ -14,6 +14,7 @@ export class TopicInfoDto {
   @IsNotEmpty()
   title: string;
 
+  @IsOptional()
   @IsNotEmpty()
   description: string;
 

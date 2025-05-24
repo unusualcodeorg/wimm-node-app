@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 import { Types } from 'mongoose';
 import { IsMongoIdObject } from '../../common/mongo.validation';
 import { Mentor } from '../schemas/mentor.schema';
@@ -20,6 +20,7 @@ export class MentorInfoDto {
   @IsNotEmpty()
   title: string;
 
+  @IsOptional()
   @IsNotEmpty()
   description: string;
 
