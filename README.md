@@ -1,6 +1,6 @@
 # NestJS Backend Architecture Project
 
-[![Docker Compose CI](https://github.com/fifocode/wimm-node-app/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/fifocode/wimm-node-app/actions/workflows/docker_compose.yml)
+[![Docker Compose CI](https://github.com/fifocode/wimm-apis/actions/workflows/docker_compose.yml/badge.svg)](https://github.com/fifocode/wimm-apis/actions/workflows/docker_compose.yml)
 
 ## WhereIsMyMotivation
 
