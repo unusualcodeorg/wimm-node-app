@@ -12,10 +12,9 @@ export class CacheConfigFactory implements CacheOptionsFactory {
     const cacheConfig =
       this.configService.getOrThrow<CacheConfig>(CacheConfigName);
     const redisURL = `redis://:${cacheConfig.password}@${cacheConfig.host}:${cacheConfig.port}`;
+    const keyv = createKeyv(redisURL);
     return {
-      store: createKeyv(redisURL),
-      url: redisURL,
-      ttl: cacheConfig.ttl,
+      stores: keyv,
     };
   }
 }
