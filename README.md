@@ -44,7 +44,7 @@ You can track your happiness level and write down daily journals. You can also s
 Using this app can bring a little bit of happiness and energy to live an inspired life.
 
 ## Read the Article to understand this project
-[Mastering NestJS — Building an Effective REST API Backend](https://medium.com/@janishar.ali/mastering-nestjs-building-an-effective-rest-api-backend-8a5add59c2f5)
+[Mastering NestJS — Building an Effective REST API Backend](https://fifocode.com/article/mastering-nestjs-building-an-effective-rest-api-backend)
 
 ## Android App using this backend
 ![Screenshot-Light](.resources/documentations/assets/display-light.png)
