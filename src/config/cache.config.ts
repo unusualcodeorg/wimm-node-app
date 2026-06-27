@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_TTL } from '@/utils';
 
 export const CacheConfigName = 'redis';
 
@@ -10,8 +11,8 @@ export interface CacheConfig {
 }
 
 export default registerAs(CacheConfigName, () => ({
-  host: process.env.REDIS_HOST || '',
-  port: process.env.REDIS_PORT || '',
-  password: process.env.REDIS_PASSWORD || '',
-  minPoolSize: parseInt(process.env.REDIS_TTL || '60'),
+  host: REDIS_HOST,
+  port: REDIS_PORT,
+  password: REDIS_PASSWORD,
+  ttl: REDIS_TTL,
 }));

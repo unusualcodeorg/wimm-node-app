@@ -1,8 +1,8 @@
 /**
  *
  * @param source the object whose properties need to be copied
- * @param keys the propeties name array to copy
- * @returns object with selected properites
+ * @param keys the properties name array to copy
+ * @returns object with selected properties
  */
 export function copy<T, K extends keyof T>(source: T, keys: K[]): Pick<T, K> {
   return keys.reduce(

@@ -7,4 +7,3 @@ export class CoreController {
     return 'alive';
   }
 }
-

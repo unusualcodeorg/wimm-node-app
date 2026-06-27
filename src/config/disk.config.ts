@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import { DISK_STORAGE_PATH, IMAGE_CACHE_DURATION } from '@/utils';
 
 export const DiskConfigName = 'disk';
 
@@ -8,6 +9,6 @@ export interface DiskConfig {
 }
 
 export default registerAs(DiskConfigName, () => ({
-  path: process.env.DISK_STORAGE_PATH || 'disk',
-  imageCacheDuration: process.env.IMAGE_CACHE_DURATION || 31536000, // 1yr
+  path: DISK_STORAGE_PATH,
+  imageCacheDuration: IMAGE_CACHE_DURATION,
 }));

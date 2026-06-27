@@ -13,4 +13,3 @@ export interface ProtectedRequest extends RoleRequest {
   accessToken?: string;
   keystore?: any;
 }
-

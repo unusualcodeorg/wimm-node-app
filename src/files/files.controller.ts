@@ -55,4 +55,3 @@ export class FilesController {
     return `${baseUrl}/assets/image/${file.filename}`;
   }
 }
-

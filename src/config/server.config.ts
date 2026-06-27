@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import { NODE_ENV, PORT, TZ, LOG_DIR } from '@/utils';
 
 export const ServerConfigName = 'server';
 
@@ -10,8 +11,8 @@ export interface ServerConfig {
 }
 
 export default registerAs(ServerConfigName, () => ({
-  nodeEnv: process.env.NODE_ENV,
-  port: parseInt(process.env.PORT || '3000'),
-  timezone: process.env.TZ,
-  logDirectory: process.env.LOG_DIR,
+  nodeEnv: NODE_ENV,
+  port: PORT,
+  timezone: TZ,
+  logDirectory: LOG_DIR,
 }));

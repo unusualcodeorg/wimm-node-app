@@ -10,6 +10,7 @@ import { FilesModule } from './files/files.module';
 import { WinstonLogger } from './setup/winston.logger';
 import { RedisCacheModule } from './cache/redis-cache.module';
 import cacheConfig from './config/cache.config';
+import { NODE_ENV } from '@/utils';
 
 @Module({
   imports: [
@@ -39,6 +40,5 @@ import cacheConfig from './config/cache.config';
 export class AppModule {}
 
 function getEnvFilePath() {
-  return process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+  return NODE_ENV === 'test' ? '.env.test' : '.env';
 }
-
