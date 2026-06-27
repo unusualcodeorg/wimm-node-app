@@ -41,3 +41,4 @@ disk/*
 
 # ignore key
 *.pem
+/generated/prisma

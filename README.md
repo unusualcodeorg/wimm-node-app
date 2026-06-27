@@ -12,8 +12,8 @@ This is a complete production ready project to learn modern techniques and appro
 - NestJS
 - Express Node
 - Typescript
-- Mongoose
-- Mongodb
+- Prisma ORM
+- Supabase (PostgreSQL)
 - Redis
 - JsonWebToken
 - Jest
@@ -66,7 +66,7 @@ git clone https://github.com/afteracademy/wimm-apis.git --recursive
 
 ### Install libraries
 ```bash
-$ npm install
+$ pnpm install
 ```
 
 ### Run Docker Compose
@@ -80,12 +80,12 @@ docker-compose up --build
 
 ### Run Tests
 ```bash
-docker exec -t wimm-apis-tester npm run test:cov
+docker exec -t wimm-apis-tester pnpm run test:cov
 ```
 If having any issue
 - Make sure 3000 port is not occupied else change PORT in **.env** file.
-- Make sure 27017 port is not occupied else change DB_PORT in **.env** file.
 - Make sure 6379 port is not occupied else change REDIS_PORT in **.env** file.
+
 
 ## Run on the local machine
 Change the following hosts in the **.env** and **.env.test**
@@ -95,34 +95,35 @@ Change the following hosts in the **.env** and **.env.test**
 Best way to run this project is to use the vscode `Run and Debug` button. Scripts are available for debugging and template generation on vscode.
 
 ```bash
-$ npm install
+$ pnpm install
 ```
 
 ### Running the app
 
 ```bash
 # development
-$ npm run start
+$ pnpm run start
 
 # watch mode
-$ npm run start:dev
+$ pnpm run start:dev
 
 # production mode
-$ npm run start:prod
+$ pnpm run start:prod
 ```
 
 ### Test
 
 ```bash
 # unit tests
-$ npm run test
+$ pnpm run test
 
 # e2e tests
-$ npm run test:e2e
+$ pnpm run test:e2e
 
 # test coverage
-$ npm run test:cov
+$ pnpm run test:cov
 ```
+
 
 ## API DOC
 [![API Documentation](https://img.shields.io/badge/API%20Documentation-View%20Here-blue?style=for-the-badge)](https://documenter.getpostman.com/view/1552895/2s9YymH5MR)

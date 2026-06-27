@@ -14,9 +14,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express, Response } from 'express';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { RoleCode } from '../auth/schemas/role.schema';
-import { ProtectedRequest } from '../core/http/request';
+import { PublicRequest } from '../core/http/request';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { FilesService } from './files.service';
@@ -39,11 +37,10 @@ export class FilesController {
     response.sendFile(filepath);
   }
 
-  @Roles([RoleCode.ADMIN])
   @UseInterceptors(FileInterceptor('image'))
   @Post('assets/upload/image')
   async uploadImageFile(
-    @Request() request: ProtectedRequest,
+    @Request() request: PublicRequest,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -58,3 +55,4 @@ export class FilesController {
     return `${baseUrl}/assets/image/${file.filename}`;
   }
 }
+

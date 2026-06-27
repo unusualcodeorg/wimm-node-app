@@ -1,6 +1,9 @@
 # Here we are getting our node as Base image
 FROM node:lts
 
+# install pnpm globally
+RUN npm install -g pnpm
+
 # create user in the docker image
 USER node
 
@@ -13,8 +16,9 @@ WORKDIR /home/node/app
 # grant permission of node project directory to node user
 COPY --chown=node:node . .
 
-# installing the dependencies into the container
-RUN npm install
+# installing the dependencies into the container using pnpm
+RUN pnpm install
 
 # command to run within the container
-CMD [ "npm", "start" ]
+CMD [ "pnpm", "start" ]
+
